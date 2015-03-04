@@ -3,6 +3,7 @@ test for odigo
 
 
 /******************TO TEST THE SITE******************************//
+
 workaround for ruby on windows after 2.0 (bug) https://gist.github.com/fnichol/867550
 
 //install rails after you make ruby work
