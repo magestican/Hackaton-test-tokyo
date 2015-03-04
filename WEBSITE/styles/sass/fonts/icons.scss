@@ -1,0 +1,29 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('./icomoon.eot?1y2c9r');
+	src:url('./icomoon.eot?#iefix1y2c9r') format('embedded-opentype'),
+		url('./icomoon.woff?1y2c9r') format('woff'),
+		url('./icomoon.ttf?1y2c9r') format('truetype'),
+		url('./icomoon.svg?1y2c9r#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-stackoverflow:before {
+	content: "\e600";
+}
+
