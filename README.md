@@ -3,8 +3,13 @@ test for odigo
 
 
 /******************TO TEST THE SITE******************************//
+//install ruby
 
-workaround for ruby on windows after 2.0 (bug) https://gist.github.com/fnichol/867550
+//ruby for non windows
+https://www.ruby-lang.org/en/
+//ruby for windows (it adds ruby to your path and everything else automatically)
+http://rubyinstaller.org/
+//workaround for ruby in case you get ssl errors, this is for windows, and it affects ruby after 2.0 (bug) https://gist.github.com/fnichol/867550
 
 //install rails after you make ruby work
 gem install rails -v 4.0.0
