@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     exec = require('child_process').exec;
 
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 dest: 'WEBSITE/templates/compiledhtml.js'
             }
         },
-      
+
         browserify: {
             'WEBSITE/js/build/main.js': ['WEBSITE/js/modules/main.js'],
             options: {
@@ -41,40 +41,40 @@ module.exports = function(grunt) {
             }
         },
 
-       
-		sass: {
+
+        sass: {
             build: {
-              options: {
-                style: 'expanded',
-                compass: true
-              },
-              files: {
-                'WEBSITE/styles/build/sassmain.css': 'WEBSITE/styles/sass/styles.scss'
-              }
+                options: {
+                    style: 'expanded',
+                    compass: true
+                },
+                files: {
+                    'WEBSITE/styles/build/sassmain.css': 'WEBSITE/styles/sass/styles.scss'
+                }
             }
         },
-		
+
         concat: {
             options: {
                 separator: ' '
             },
-			css: {
+            css: {
                 src: [
                      'WEBSITE/styles/css/**/*.css',
 					 'WEBSITE/styles/build/sassmain.css',
                 ],
                 dest: 'WEBSITE/styles/build/main.css'
             },
-			lib: {
+            lib: {
                 src: [
                     'WEBSITE/js/lib/angular.js',
 					'WEBSITE/js/lib/semantic.js',
                 ],
                 dest: 'WEBSITE/js/build/lib.js'
             },
-			
+
         },
-		
+
 
         uglify: {
             options: {
@@ -82,9 +82,9 @@ module.exports = function(grunt) {
                 mangle: false
             },
             lib: {
-				options: {
-					mangle: false
-				},
+                options: {
+                    mangle: false
+                },
                 files: {
                     'WEBSITE/js/build/lib.min.js': ['WEBSITE/js/build/lib.js']
                 }

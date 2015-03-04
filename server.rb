@@ -73,7 +73,7 @@ loop do
   path = requested_file(request_line)
   
 
-  path = File.join(path, 'index.html') if File.directory?(path)
+  path = File.join(path, './templates/pages/index.html') if File.directory?(path)
 
   
   # Make sure the file exists and is not a directory
