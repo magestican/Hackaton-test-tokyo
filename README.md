@@ -42,6 +42,7 @@ http://nodejs.org/download/
 ►go to the folder were you downloaded the repository and type :
 
 node install
+
 ►this will read the packages.js file and download all the prerequired libraries to develop, it will more importantly install
 
 grunt
@@ -49,6 +50,7 @@ grunt
 ►now to finish, execute 
 
 grunt watch
+
 ►this will execute tasks defined in the Gruntfile.js, it will compile your js and sass, minimize your html, bundle your angular modules, and minify everything automatically
 
 ►you can also run the following command if you made a change with grunt watch not running
