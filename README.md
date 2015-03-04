@@ -47,6 +47,11 @@ this will read the packages.js file and download all the prerequired libraries t
 
 ►grunt
 
+because we use ass we need to install compass
+
+►gem install compass
+
+
 now to finish, execute 
 
 ►grunt watch
@@ -58,3 +63,5 @@ you can also run the following command if you made a change with grunt watch not
 ►grunt build 
 
 if deploying to production run grunt production, it will minify (uglify) your files so that they will weight less and the page will load faster
+
+
