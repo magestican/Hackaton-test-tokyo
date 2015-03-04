@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     icon-stackoverflow
-
     <title>Feed Example - Semantic</title>
 
     <link rel="stylesheet" type="text/css" href="./styles/build/main.css">
@@ -15,9 +14,17 @@
     <!-- Semantics has a requirement for jquery to do its effects -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
-    <script src="./js/main.js"></script>
+
+    <script src="./js/build/lib.js"></script>
+
+    <script src="./js/modules/app.js"></script>
+    <script src="./js/build/main.js"></script>
 </head>
-<body id="feed">
+<body id="feed" ng-app="odigoapp">
+
+    <div ng-controller="DummyController">
+        {{something}}
+    </div>
     <div class="ui large inverted vertical sidebar menu">
         <a class="active item">
             Dogs Weekly <span class="ui label">213</span>

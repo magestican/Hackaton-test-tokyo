@@ -1,6 +1,7 @@
-angular.module("odigotest").run(["$templateCache", function($templateCache) {
+angular.module('odigoapp').run(['$templateCache', function($templateCache) {
+  'use strict';
 
-  $templateCache.put("pages/index.html",
+  $templateCache.put('WEBSITE/templates/pages/index.html',
     "<!DOCTYPE html>\r" +
     "\n" +
     "<html>\r" +
@@ -19,8 +20,6 @@ angular.module("odigotest").run(["$templateCache", function($templateCache) {
     "\n" +
     "    icon-stackoverflow\r" +
     "\n" +
-    "\r" +
-    "\n" +
     "    <title>Feed Example - Semantic</title>\r" +
     "\n" +
     "\r" +
@@ -35,11 +34,27 @@ angular.module("odigotest").run(["$templateCache", function($templateCache) {
     "\n" +
     "    <script src=\"http://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js\"></script>\r" +
     "\n" +
-    "    <script src=\"./js/main.js\"></script>\r" +
+    "\r" +
+    "\n" +
+    "    <script src=\"./js/build/lib.js\"></script>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <script src=\"./js/modules/app.js\"></script>\r" +
+    "\n" +
+    "    <script src=\"./js/build/main.js\"></script>\r" +
     "\n" +
     "</head>\r" +
     "\n" +
-    "<body id=\"feed\">\r" +
+    "<body id=\"feed\" ng-app=\"odigoapp\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <div ng-controller=\"DummyController\">\r" +
+    "\n" +
+    "        {{something}}\r" +
+    "\n" +
+    "    </div>\r" +
     "\n" +
     "    <div class=\"ui large inverted vertical sidebar menu\">\r" +
     "\n" +

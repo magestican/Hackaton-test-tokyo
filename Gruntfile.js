@@ -26,8 +26,8 @@ module.exports = function (grunt) {
             build: {
                 options: {
                     base: 'WEBSITE/templates',
-                    prepend: '',
-                    module: 'odigotest'
+                    prepend: ' ',
+                    module: 'odigoapp'
                 },
                 src: ['WEBSITE/templates/**/*.html'],
                 dest: 'WEBSITE/templates/compiledhtml.js'
@@ -67,7 +67,8 @@ module.exports = function (grunt) {
             },
             lib: {
                 src: [
-                    'WEBSITE/js/lib/angular.js',
+                    'WEBSITE/js/lib/angular.min.js',
+                    'WEBSITE/js/lib/angular-route.js',
 					'WEBSITE/js/lib/semantic.js',
                 ],
                 dest: 'WEBSITE/js/build/lib.js'

@@ -1,9 +1,9 @@
-angular.module('Controllers')
+angular.module('odigoapp')
+    .controller('DummyController', ['$scope', '$filter',
+    function ($scope, $filter) {
 
-    .controller('Dummy',
-    ['$scope', '$element', '$filter',
-    function($scope, $element, $filter) {
-
-	
+        console.log($scope.global);
+        console.log("asd");
+        $scope.something = "asd";
 
     }]);
