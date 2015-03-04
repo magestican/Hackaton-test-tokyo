@@ -1,4 +1,4 @@
-angular.module('odigoapp')
+angular.module('Controllers')
     .controller('DummyController', ['$scope', '$filter',
     function ($scope, $filter) {
 
