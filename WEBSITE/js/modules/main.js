@@ -1,5 +1,5 @@
-require('../libs/angular.js');
-require('../libs/semantic.min.js');
+require('../lib/angular.js');
+require('../lib/semantic.min.js');
 
 require('./controllers.js');
 require('./directives.js');
