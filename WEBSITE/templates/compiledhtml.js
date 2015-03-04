@@ -38,10 +38,6 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <script src=\"./js/build/lib.js\"></script>\r" +
     "\n" +
-    "\r" +
-    "\n" +
-    "    <script src=\"./js/modules/app.js\"></script>\r" +
-    "\n" +
     "    <script src=\"./js/build/main.js\"></script>\r" +
     "\n" +
     "</head>\r" +
