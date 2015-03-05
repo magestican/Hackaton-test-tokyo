@@ -15,33 +15,50 @@ var global = {};
 
 App.run(function ($rootScope) {
     //if scope is not available
+    $rootScope.model = {};
     $rootScope.global = global;
 });
+
+
+App.config(['$routeProvider', function ($routeProvider) {
+
+    $routeProvider.when('/', {
+        controller: 'MainController'
+    });
+}]);
 },{}],2:[function(require,module,exports){
 angular.module('Controllers', []);
 
-require('./controllers/dummy.js');
-},{"./controllers/dummy.js":3}],3:[function(require,module,exports){
+require('./controllers/main.js');
+},{"./controllers/main.js":3}],3:[function(require,module,exports){
 angular.module('Controllers')
-    .controller('DummyController', ['$scope', '$filter',
+    .controller('MainController', ['$scope', '$filter',
     function ($scope, $filter) {
 
-        console.log($scope.global);
-        console.log("asd");
-        $scope.something = "asd";
+        $scope.global.questions = [];
+        $scope.global.user = {};
+
+
+
 
     }]);
 },{}],4:[function(require,module,exports){
 angular.module('Directives', []);
 
-require('./directives/dummy.js');
+require('./directives/answer.js');
+require('./directives/errormanager.js');
+require('./directives/newquestion.js');
+require('./directives/question.js');
+require('./directives/applicationManager.js');
+require('./directives/login.js');
 
-},{"./directives/dummy.js":5}],5:[function(require,module,exports){
+
+},{"./directives/answer.js":5,"./directives/applicationManager.js":6,"./directives/errormanager.js":7,"./directives/login.js":8,"./directives/newquestion.js":9,"./directives/question.js":10}],5:[function(require,module,exports){
 angular.module('Directives')
-    .directive('dummy', ['$filter', function ($filter) {
+    .directive('answer', ['$filter', function ($filter) {
         return {
             restrict: 'E',
-            template: '<div>dummy</div>',
+            templateUrl: 'answer.html',
             transclude: true,
             replace: true,
             scope: false,
@@ -55,25 +72,238 @@ angular.module('Directives')
         };
     }]);
 },{}],6:[function(require,module,exports){
+angular.module('Directives')
+    .directive('applicationManager', ['$filter', function ($filter) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/application-manager.html',
+            transclude: true,
+            replace: true,
+            scope: false,
+            link: function (scope, element, attrs, controllers) {
+                //this is a dummy directive
+
+            }
+        };
+    }]);
+},{}],7:[function(require,module,exports){
+angular.module('Directives')
+    .directive('errorManager', ['$filter', function ($filter) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/error.html',
+            transclude: true,
+            replace: true,
+            scope: false,
+            link: function (scope, element, attrs, controllers) {
+
+                scope.model.errorMessage = "";
+                scope.model.showerror = false;
+
+                scope.global.errorOcurred = function (Description) {
+                    if (Description != undefined) {
+                        scope.model.errorMessage = Description;
+                        scope.model.showerror = true;
+                    }
+
+                    throw new EventException(Description);
+                }
+
+                scope.global.removeError = function () {
+                    scope.model.showerror = false;
+                    scope.model.errorMessage = "";
+
+                }
+            }
+        };
+    }]);
+
+},{}],8:[function(require,module,exports){
+angular.module('Directives')
+    .directive('login', ['$filter', 'LoginFactory', function ($filter, LoginFactory) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/login.html',
+            transclude: true,
+            replace: true,
+            scope: false,
+            link: function (scope, element, attrs, controllers) {
+
+                scope.dummy = function () {
+                }
+
+                scope.login = function () {
+                    var myParams = {
+                        'clientid': '28552151452-v86ec9nn8jm6r4de5sghds4bmq4n1ccb.apps.googleusercontent.com', //You need to set client id
+                        'cookiepolicy': 'single_host_origin',
+                        'callback': 'loginCallback', //callback function
+                        'approvalprompt': 'force',
+                        'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
+                    };
+                    gapi.auth.signIn(myParams);
+                }
+                var reference = scope.global.user;
+                window.loginCallback = function (result) {
+                    if (result['status']['signed_in']) {
+                        //if success get user data
+
+                        LoginFactory.login(result.access_token);
+
+
+
+                        var request = gapi.client.plus.people.get(
+                        {
+                            'userId': 'me'
+                        });
+                        request.execute(function (resp) {
+                            var email = '';
+                            if (resp['emails']) {
+                                for (i = 0; i < resp['emails'].length; i++) {
+                                    if (resp['emails'][i]['type'] == 'account') {
+                                        email = resp['emails'][i]['value'];
+                                    }
+                                }
+                            }
+
+                            var str = "Name:" + resp['displayName'] + "<br>";
+                            str += "Image:" + resp['image']['url'] + "<br>";
+                            str += "<img src='" + resp['image']['url'] + "' /><br>";
+
+                            str += "URL:" + resp['url'] + "<br>";
+                            str += "Email:" + email + "<br>";
+                            document.getElementById("profile").innerHTML = str;
+                        });
+                    }
+                }
+
+
+
+
+            }
+        };
+    }]);
+},{}],9:[function(require,module,exports){
+angular.module('Directives')
+    .directive('newQuestion', ['$filter', 'QuestionFactory', function ($filter, QuestionFactory) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/new-question.html',
+            transclude: true,
+            replace: true,
+            scope: false,
+            link: function (scope, element, attrs, controllers) {
+
+                var model = scope.model;
+
+                function question(Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
+
+                    this.title = Title || scope.global.errorOcurred("The title cannot be empty");
+                    this.body = Body || scope.global.errorOcurred("The body canot be empty");
+                    this.username = Username;
+                    this.rating = Rating || 0;
+                    this.datetime = Datetime || new Date().toDateString();
+                    this.categories = Categories || scope.global.errorOcurred("You must input at least one category");
+                    this.userPicture = UserPicture;
+                }
+
+
+                scope.addQuestion = function () {
+
+                    try {
+                        var result = new question(model.title,
+                                                    model.body,
+                                                    model.username,
+                                                    model.rating,
+                                                    model.datetime,
+                                                    model.categories,
+                                                    model.userPicture);
+
+                        QuestionFactory.addQuestion(result);
+                    }
+                    catch (exception) {
+                        console.log("an exception ocurred");
+                        console.log(exception);
+                    }
+                }
+
+                scope.addDummyQuestion = function () {
+
+                    try {
+                        var result = new question("this is title", "this is body", "magestico", 5, new Date().toDateString(), ["category1", "category2"]);
+                        scope.global.questions.push(result);
+
+                    }
+                    catch (exception) {
+                        console.log("an exception ocurred");
+                        console.log(exception);
+                    }
+                }
+
+
+
+                scope.addDummyQuestion();
+            }
+        };
+    }]);
+},{}],10:[function(require,module,exports){
+angular.module('Directives')
+    .directive('question', ['$filter', function ($filter) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/question.html',
+            transclude: true,
+            replace: true,
+            scope: {
+                'model.questions': "="
+            },
+            link: function (scope, element, attrs, controllers) {
+
+
+                if (attrs.$index != undefined) {
+
+                    scope.model = {};
+                    scope.model.question = scope.model.questions[attrs.$index];
+                }
+
+            }
+        };
+    }]);
+},{}],11:[function(require,module,exports){
 angular.module('Factories', []);
 
-require('./factories/dummy.js');
+require('./factories/questionFactory.js');
 
-},{"./factories/dummy.js":7}],7:[function(require,module,exports){
+},{"./factories/questionFactory.js":12}],12:[function(require,module,exports){
 angular.module('Factories')
 
-    .factory('dummy', ['$rootScope', '$q', function($rootScope) {
+    .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
         return {
-		    dummy: function () {
-			//dummy
-			}
+            addQuestion: function (question) {
+
+                var deferred = $q.defer();
+
+
+                $http.get('/api/v1/movies/' + movie).success(function (data) {
+                    deferred.resolve(result);
+                }).error(function (error) {
+
+                    deferred.reject(event);
+
+                })
+
+                return deferred.promise;
+
+            }
+
+
+
         };
     }])
 
-},{}],8:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 angular.module('Filters', []);
 
-},{}],9:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 require('./app.js');
 
@@ -84,366 +314,143 @@ require('./filters.js');
 
 
 require('../../templates/compiledhtml.js')
-},{"../../templates/compiledhtml.js":10,"./app.js":1,"./controllers.js":2,"./directives.js":4,"./factories.js":6,"./filters.js":8}],10:[function(require,module,exports){
+},{"../../templates/compiledhtml.js":15,"./app.js":1,"./controllers.js":2,"./directives.js":4,"./factories.js":11,"./filters.js":13}],15:[function(require,module,exports){
 angular.module('odigoapp').run(['$templateCache', function($templateCache) {
   'use strict';
 
-  $templateCache.put('WEBSITE/templates/pages/index.html',
-    "<!DOCTYPE html>\r" +
-    "\n" +
-    "<html>\r" +
-    "\n" +
-    "<head>\r" +
-    "\n" +
-    "    <!-- Standard Meta -->\r" +
-    "\n" +
-    "    <meta charset=\"utf-8\" />\r" +
-    "\n" +
-    "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\" />\r" +
-    "\n" +
-    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\">\r" +
+  $templateCache.put('templates/directives/answer.html',
+    "<div ng-show=\"showerror\" class=\"ui error form segment\">\r" +
     "\n" +
     "\r" +
     "\n" +
-    "    icon-stackoverflow\r" +
+    "    <div class=\"teal ui button\">B</div>\r" +
     "\n" +
-    "    <title>Feed Example - Semantic</title>\r" +
+    "</div>"
+  );
+
+
+  $templateCache.put('templates/directives/application-manager.html',
+    "\r" +
+    "\n" +
+    "<div ng-controller=\"MainController\">\r" +
     "\n" +
     "\r" +
     "\n" +
-    "    <link rel=\"stylesheet\" type=\"text/css\" href=\"./styles/build/main.css\">\r" +
+    "    <login></login>\r" +
+    "\n" +
+    "    <error:manager></error:manager>\r" +
     "\n" +
     "\r" +
     "\n" +
-    "    <!-- Semantics has a requirement for jquery to do its effects -->\r" +
-    "\n" +
-    "    <script src=\"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js\"></script>\r" +
-    "\n" +
-    "    <script src=\"http://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js\"></script>\r" +
+    "    <new:question></new:question>\r" +
     "\n" +
     "\r" +
     "\n" +
-    "    <script src=\"./js/build/lib.js\"></script>\r" +
-    "\n" +
-    "    <script src=\"./js/build/main.js\"></script>\r" +
-    "\n" +
-    "</head>\r" +
-    "\n" +
-    "<body id=\"feed\" ng-app=\"odigoapp\">\r" +
+    "    <div class=\"ui center aligned segment\">\r" +
     "\n" +
     "\r" +
     "\n" +
-    "    <div ng-controller=\"DummyController\">\r" +
+    "        <div class=\"ui horizontal divider\">Top question of the community</div>\r" +
     "\n" +
-    "        {{something}}\r" +
+    "\r" +
+    "\n" +
+    "        <question ng-repeat=\"question in model.questions | orderBy:rating | limitTo: 1\"></question>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "        <div class=\"ui horizontal divider\">Other questions by the community</div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "        <question ng-repeat=\"question in  model.questions\"></question>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
-    "    <div class=\"ui large inverted vertical sidebar menu\">\r" +
+    "\r" +
     "\n" +
-    "        <a class=\"active item\">\r" +
+    "\r" +
     "\n" +
-    "            Dogs Weekly <span class=\"ui label\">213</span>\r" +
+    "    <reply></reply>\r" +
     "\n" +
-    "        </a>\r" +
+    "\r" +
     "\n" +
-    "        <a class=\"item\">\r" +
+    "</div>"
+  );
+
+
+  $templateCache.put('templates/directives/error.html',
+    "<div ng-show=\"model.showerror\" class=\"ui error form segment\">\r" +
     "\n" +
-    "            Joystiq <span class=\"ui label\">113</span>\r" +
+    "    <div class=\"ui error message\">\r" +
     "\n" +
-    "        </a>\r" +
+    "        <div class=\"header\">{{model.errorMessage}}</div>\r" +
     "\n" +
-    "        <div class=\"item\">\r" +
-    "\n" +
-    "            <b>Archived Feeds</b>\r" +
-    "\n" +
-    "            <div class=\"menu\">\r" +
-    "\n" +
-    "                <a class=\"item\">\r" +
-    "\n" +
-    "                    Engadget <span class=\"ui label\">11</span>\r" +
-    "\n" +
-    "                </a>\r" +
-    "\n" +
-    "                <a class=\"item\">\r" +
-    "\n" +
-    "                    NY Times Tech Blog <span class=\"ui label\">21</span>\r" +
-    "\n" +
-    "                </a>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "        <a class=\"item\">\r" +
-    "\n" +
-    "            <i class=\"bookmark icon\"></i> Favorites\r" +
-    "\n" +
-    "        </a>\r" +
-    "\n" +
-    "        <div class=\"ui dropdown item\">\r" +
-    "\n" +
-    "            <i class=\"add icon\"></i> New\r" +
-    "\n" +
-    "            <div class=\"menu\">\r" +
-    "\n" +
-    "                <a class=\"item\"><i class=\"rss icon\"></i> Feed</a>\r" +
-    "\n" +
-    "                <a class=\"item\"><i class=\"tag icon\"></i> Tag</a>\r" +
-    "\n" +
-    "                <a class=\"item\"><i class=\"folder icon\"></i> Group</a>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "        </div>\r" +
+    "        <p>Error message long description</p>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
-    "    <div class=\"ui divided two column padded grid\">\r" +
+    "</div>"
+  );
+
+
+  $templateCache.put('templates/directives/login.html',
+    "<div>\r" +
     "\n" +
-    "        <div class=\"left column\">\r" +
+    " \r" +
     "\n" +
-    "            <div class=\"ui left floated launch icon button\">\r" +
+    "    <div ng-click=\"login()\" class=\"ui google plus button\">\r" +
     "\n" +
-    "                <i class=\"sidebar icon\"></i>\r" +
+    "        <i class=\"google plus icon\"></i>\r" +
     "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui right floated launch primary button\">\r" +
-    "\n" +
-    "                <i class=\"mail icon\"></i> Compose\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui secondary pointing filter menu\">\r" +
-    "\n" +
-    "                <a class=\"active red item\" data-tab=\"unread\">Unread</a>\r" +
-    "\n" +
-    "                <a class=\"blue item\" data-tab=\"saved\">Saved</a>\r" +
-    "\n" +
-    "                <a class=\"green item\" data-tab=\"all\">All</a>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui active tab\" data-tab=\"unread\">\r" +
-    "\n" +
-    "                <div class=\"ui very relaxed divided link list\">\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Scientists discover new breed of dog</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"active item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Weekly Webcomic Wrapup fought the law, and the law won</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 10, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Dogs colony in Antarctica</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 09, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Famous dog whisperer Chakotay dies today at 104</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 07, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Top 10 Things to Know about Labradoodles</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 05, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Study shows children enjoy the company of animals</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                </div>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui tab\" data-tab=\"saved\">\r" +
-    "\n" +
-    "                <div class=\"ui very relaxed divided link list\">\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Your favorite saved article</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Your favorite saved article</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">Your favorite saved article</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                </div>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui tab\" data-tab=\"all\">\r" +
-    "\n" +
-    "                <div class=\"ui very relaxed divided link list\">\r" +
-    "\n" +
-    "                    <a class=\"item\">\r" +
-    "\n" +
-    "                        <div class=\"left floated ui star rating\">\r" +
-    "\n" +
-    "                            <i class=\"link icon\"></i>\r" +
-    "\n" +
-    "                        </div>\r" +
-    "\n" +
-    "                        <div class=\"right floated date\">Sep 14, 2013</div>\r" +
-    "\n" +
-    "                        <div class=\"description\">There turns out there is only one article under all.</div>\r" +
-    "\n" +
-    "                    </a>\r" +
-    "\n" +
-    "                </div>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "            <div class=\"ui divider\"></div>\r" +
-    "\n" +
-    "            <div class=\"current\">Showing <b>6</b> of 213</div>\r" +
-    "\n" +
-    "            <div class=\"ui text menu\">\r" +
-    "\n" +
-    "                <a class=\"icon item\"><i class=\"icon left chevron\"></i></a>\r" +
-    "\n" +
-    "                <a class=\"active item\">1</a>\r" +
-    "\n" +
-    "                <div class=\"disabled item\">...</div>\r" +
-    "\n" +
-    "                <a class=\"item\">10</a>\r" +
-    "\n" +
-    "                <a class=\"item\">11</a>\r" +
-    "\n" +
-    "                <a class=\"item\">12</a>\r" +
-    "\n" +
-    "                <a class=\"icon item\"><i class=\"icon right chevron\"></i></a>\r" +
-    "\n" +
-    "            </div>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "        <div class=\"right column\">\r" +
-    "\n" +
-    "            <h1 class=\"ui header\">Weekly Webcomic Wrapup fought the law, and the law won</h1>\r" +
-    "\n" +
-    "            <a class=\"ui label\">Unread</a>\r" +
-    "\n" +
-    "            <a class=\"ui label\">Comics</a>\r" +
-    "\n" +
-    "            <div class=\"ui divider\"></div>\r" +
-    "\n" +
-    "            <p>So there's this video game coming out Tuesday called Grand Theft Auto 5. Don't know if you've heard of it. Anyways, it's all about crime and gangs and some roughneck ne'er-do-wells, so I thought this would be the perfect time to talk about times when we've been... well, less than perfect.</p>\r" +
-    "\n" +
-    "            <p>When I was a young'un, I was a frequent visitor to the local swimming pool. I was also a frequent lover of AirHeads candy, which the pool happened to sell. Waiting, watching, stalking the counter like a big cat in the savannah, I waited for the perfect opportunity to strike. While the lifeguards were busy, I snuck through the gate, reached up and took both cherry and \"mystery white\" AirHeads. I quickly ran out to the sidewalk and reveled in my sweet, delicious victory... for all of ten seconds, before I felt guilty enough to sneak back in and return the .20 worth of candy I had stolen.</p>\r" +
-    "\n" +
-    "            <p>While you confess your crimes - hopefully minor, and nothing you can be persecuted for - take a moment to enjoy this week's webcomics, and vote for your favorite after the jump.</p>\r" +
-    "\n" +
-    "            <div class=\"ui divider\"></div>\r" +
-    "\n" +
-    "            <div class=\"ui basic button\">Save</div>\r" +
-    "\n" +
-    "            <div class=\"ui basic button\">Delete</div>\r" +
-    "\n" +
-    "        </div>\r" +
+    "        Login with google plus\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
-    "</body>\r" +
+    "\r" +
     "\n" +
-    "</html>"
+    "</div>"
+  );
+
+
+  $templateCache.put('templates/directives/new-question.html',
+    "<div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "</div>"
+  );
+
+
+  $templateCache.put('templates/directives/question.html',
+    "<div ng-show=\"showerror\" class=\"ui error form segment\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <div class=\"header\">\r" +
+    "\n" +
+    "        <img src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
+    "\n" +
+    "        {{model.question.title}}\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "    <div class=\"description\">\r" +
+    "\n" +
+    "        {{model.question.body}}\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "</div>"
   );
 
 }]);
 
-},{}]},{},[9]);
+},{}]},{},[14]);

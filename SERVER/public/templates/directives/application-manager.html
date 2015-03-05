@@ -1,0 +1,24 @@
+﻿
+<div ng-controller="MainController">
+
+    <login></login>
+    <error:manager></error:manager>
+
+    <new:question></new:question>
+
+    <div class="ui center aligned segment">
+
+        <div class="ui horizontal divider">Top question of the community</div>
+
+        <question ng-repeat="question in model.questions | orderBy:rating | limitTo: 1"></question>
+
+        <div class="ui horizontal divider">Other questions by the community</div>
+
+        <question ng-repeat="question in  model.questions"></question>
+
+    </div>
+
+
+    <reply></reply>
+
+</div>

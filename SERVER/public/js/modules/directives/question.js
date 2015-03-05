@@ -2,7 +2,7 @@ angular.module('Directives')
     .directive('question', ['$filter', function ($filter) {
         return {
             restrict: 'E',
-            template: 'question.html',
+            templateUrl: 'templates/directives/question.html',
             transclude: true,
             replace: true,
             scope: {

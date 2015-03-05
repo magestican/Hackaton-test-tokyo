@@ -1,16 +1,13 @@
 angular.module('Directives')
-    .directive('answer', ['$filter', function ($filter) {
+    .directive('applicationManager', ['$filter', function ($filter) {
         return {
             restrict: 'E',
-            templateUrl: 'answer.html',
+            templateUrl: 'templates/directives/application-manager.html',
             transclude: true,
             replace: true,
             scope: false,
             link: function (scope, element, attrs, controllers) {
-
-                scope.dummy = function ()
-				{
-				}
+                //this is a dummy directive
 
             }
         };

@@ -1,7 +1,0 @@
-//dummy
-@mixin flex-wrap($wrap: nowrap) {
-  -webkit-flex-wrap: $wrap;
-     -moz-flex-wrap: $wrap;
-      -ms-flex-wrap: $wrap;
-          flex-wrap: $wrap;
-}

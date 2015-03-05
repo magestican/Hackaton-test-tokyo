@@ -2,7 +2,7 @@ angular.module('Directives')
     .directive('errorManager', ['$filter', function ($filter) {
         return {
             restrict: 'E',
-            template: 'error.html',
+            templateUrl: 'templates/directives/error.html',
             transclude: true,
             replace: true,
             scope: false,

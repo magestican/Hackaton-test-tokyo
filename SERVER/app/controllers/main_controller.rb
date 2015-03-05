@@ -1,15 +1,14 @@
 class MainController < ActionController::Base
   @@logged_users = Array.new
+  $adminemail = "magestican.visualkei@gmail.com"
 
   def login
-	@@loggedUsers.push(params.[:token])
+	@@loggedUsers.push(params[:token])
   end
   
 
   def start
-	respond_to do |format|
-		format.html { render :text => File.open('Public/templates/pages/index.html').read }
-	end
+    MainController.new
   end
   
   def getdatabase
@@ -19,7 +18,7 @@ class MainController < ActionController::Base
   end
   
   def updatedatabase
-	if @@logged_users.include?(params.[:token]) then
+	if @@logged_users.include?(params[:token]) then
 		File.open("db/database.json", 'w') do |f|
 			f.write(content)
 		end
