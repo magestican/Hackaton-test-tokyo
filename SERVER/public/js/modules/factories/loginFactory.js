@@ -1,16 +1,17 @@
 ﻿angular.module('Factories')
-
     .factory('LoginFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
 
+        return {
 
-        var LoginService = function () {
+            login: function () {
 
-            var LoginService = $resource('/main/login/:token', {}, {
-                'login': { method: 'POST' },
-            });
+                var login = $resource('/main/login/:token', {}, {
+                    'login': { method: 'POST' },
+                });
 
-            return LoginService;
-        }
-        return LoginService;
+                return login;
+            }
 
+
+        };
     }])

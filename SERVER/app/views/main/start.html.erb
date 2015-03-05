@@ -12,7 +12,10 @@
 	<%= csrf_meta_tag %>
 
     <pre>
-       <%= $adminemail  %>
+	   <script>
+	   window.admin= '<%= $adminemail %>'
+	   </script>
+     
     </pre>
 
 

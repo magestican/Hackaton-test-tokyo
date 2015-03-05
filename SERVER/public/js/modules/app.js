@@ -3,7 +3,7 @@
 // App
 ////////////////////////////////////////////////////////////
 
-var App = angular.module('odigoapp', ['ngRoute','ngResource', 'Directives', 'Controllers', 'Factories', 'Filters']);
+var App = angular.module('odigoapp', ['ngRoute', 'ngResource', 'Directives', 'Controllers', 'Factories', 'Filters', 'Services']);
 
 ////////////////////////////////////////////////////////////
 // CONFIG
@@ -20,7 +20,7 @@ App.run(function ($rootScope) {
 
 
 App.config(['$routeProvider', '$httpProvider', function ($routeProvider, provider) {
-    
+
 
     //ruby stuff
     provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');

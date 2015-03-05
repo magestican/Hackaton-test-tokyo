@@ -5,18 +5,11 @@ angular.module('Directives')
             templateUrl: 'templates/directives/question.html',
             transclude: true,
             replace: true,
-            scope: {
-                'model.questions': "="
-            },
+            scope: false,
             link: function (scope, element, attrs, controllers) {
 
-
-                if (attrs.$index != undefined) {
-
-                    scope.model = {};
-                    scope.model.question = scope.model.questions[attrs.$index];
-                }
-
+                scope.model = {};
+                scope.model.question = scope.question;
             }
         };
     }]);

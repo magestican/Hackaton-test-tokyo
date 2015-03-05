@@ -37,7 +37,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in model.questions | orderBy:rating | limitTo: 1\"></question>\r" +
+    "        <question ng-repeat=\"question in global.questions | orderBy:rating | limitTo: 1\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -45,7 +45,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in  model.questions\"></question>\r" +
+    "        <question ng-repeat=\"question in  global.questions\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -98,7 +98,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('templates/directives/new-question.html',
-    "<div>\r" +
+    "<div ng-controller=\"QuestionController\">\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -107,15 +107,13 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('templates/directives/question.html',
-    "<div ng-show=\"showerror\" class=\"ui error form segment\">\r" +
-    "\n" +
-    "\r" +
+    "<div>\r" +
     "\n" +
     "\r" +
     "\n" +
     "    <div class=\"header\">\r" +
     "\n" +
-    "        <img src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
+    "        <img ng-src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +

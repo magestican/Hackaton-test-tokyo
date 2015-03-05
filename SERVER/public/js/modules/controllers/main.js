@@ -3,9 +3,6 @@ angular.module('Controllers')
     function ($scope, $filter) {
 
         $scope.global.questions = [];
-        $scope.global.user = {};
-
-
 
 
     }]);

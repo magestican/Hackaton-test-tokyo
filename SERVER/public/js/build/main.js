@@ -4,7 +4,7 @@
 // App
 ////////////////////////////////////////////////////////////
 
-var App = angular.module('odigoapp', ['ngRoute','ngResource', 'Directives', 'Controllers', 'Factories', 'Filters']);
+var App = angular.module('odigoapp', ['ngRoute', 'ngResource', 'Directives', 'Controllers', 'Factories', 'Filters', 'Services']);
 
 ////////////////////////////////////////////////////////////
 // CONFIG
@@ -21,7 +21,7 @@ App.run(function ($rootScope) {
 
 
 App.config(['$routeProvider', '$httpProvider', function ($routeProvider, provider) {
-    
+
 
     //ruby stuff
     provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
@@ -37,19 +37,59 @@ App.config(['$routeProvider', '$httpProvider', function ($routeProvider, provide
 angular.module('Controllers', []);
 
 require('./controllers/main.js');
-},{"./controllers/main.js":3}],3:[function(require,module,exports){
+require('./controllers/question.js');
+},{"./controllers/main.js":3,"./controllers/question.js":4}],3:[function(require,module,exports){
 angular.module('Controllers')
     .controller('MainController', ['$scope', '$filter',
     function ($scope, $filter) {
 
         $scope.global.questions = [];
-        $scope.global.user = {};
-
-
 
 
     }]);
 },{}],4:[function(require,module,exports){
+angular.module('Controllers')
+    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory',
+    function ($scope, $filter, QuestionFactory) {
+
+
+        $scope.addQuestion = function () {
+
+            try {
+                var result = new QuestionFactory.newQuestion(model.title,
+                                            model.body,
+                                            model.username,
+                                            model.rating,
+                                            model.datetime,
+                                            model.categories,
+                                            model.userPicture);
+
+                QuestionFactory.addQuestion(result);
+            }
+            catch (exception) {
+                console.log("an exception ocurred");
+                console.log(exception);
+            }
+        }
+
+        $scope.addDummyQuestion = function () {
+            try {
+                var result = new QuestionFactory.newQuestion("this is title", "this is body", "magestico", 5, new Date().toDateString(), ["category1", "category2"]);
+                $scope.global.questions.push(result);
+
+            }
+            catch (exception) {
+                console.log("an exception ocurred");
+                console.log(exception);
+            }
+        }
+
+
+
+        $scope.addDummyQuestion();
+
+    }]);
+},{}],5:[function(require,module,exports){
 angular.module('Directives', []);
 
 require('./directives/answer.js');
@@ -60,7 +100,7 @@ require('./directives/applicationManager.js');
 require('./directives/login.js');
 
 
-},{"./directives/answer.js":5,"./directives/applicationManager.js":6,"./directives/errormanager.js":7,"./directives/login.js":8,"./directives/newquestion.js":9,"./directives/question.js":10}],5:[function(require,module,exports){
+},{"./directives/answer.js":6,"./directives/applicationManager.js":7,"./directives/errormanager.js":8,"./directives/login.js":9,"./directives/newquestion.js":10,"./directives/question.js":11}],6:[function(require,module,exports){
 angular.module('Directives')
     .directive('answer', ['$filter', function ($filter) {
         return {
@@ -78,7 +118,7 @@ angular.module('Directives')
             }
         };
     }]);
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 angular.module('Directives')
     .directive('applicationManager', ['$filter', function ($filter) {
         return {
@@ -93,7 +133,7 @@ angular.module('Directives')
             }
         };
     }]);
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 angular.module('Directives')
     .directive('errorManager', ['$filter', function ($filter) {
         return {
@@ -113,7 +153,7 @@ angular.module('Directives')
                         scope.model.showerror = true;
                     }
 
-                    throw new EventException(Description);
+                    throw new RegExp(Description);
                 }
 
                 scope.global.removeError = function () {
@@ -125,9 +165,9 @@ angular.module('Directives')
         };
     }]);
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 angular.module('Directives')
-    .directive('login', ['$filter', 'LoginFactory', function ($filter, LoginFactory) {
+    .directive('login', ['$filter', 'LoginFactory', 'UserService', 'DatabaseFactory', function ($filter, LoginFactory, UserService, DatabaseFactory) {
         return {
             restrict: 'E',
             templateUrl: 'templates/directives/login.html',
@@ -139,17 +179,20 @@ angular.module('Directives')
                 scope.dummy = function () {
                 }
 
+
                 scope.login = function () {
+
+                    //login parameters
                     var myParams = {
-                        'clientid': '28552151452-v86ec9nn8jm6r4de5sghds4bmq4n1ccb.apps.googleusercontent.com', //You need to set client id
+                        'clientid': '28552151452-v86ec9nn8jm6r4de5sghds4bmq4n1ccb.apps.googleusercontent.com',
                         'cookiepolicy': 'single_host_origin',
-                        'callback': 'loginCallback', //callback function
+                        'callback': 'loginCallback',
                         'approvalprompt': 'force',
                         'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
                     };
                     gapi.auth.signIn(myParams);
                 }
-                var reference = scope.global.user;
+
                 window.loginCallback = function (result) {
                     if (result['status']['signed_in']) {
 
@@ -162,6 +205,9 @@ angular.module('Directives')
                         login.login({ token: result.access_token }, function (data) {
                             console.log("login server result");
                             console.log(data);
+
+
+
                         }, function (error) {
                             console.log("error ocurred");
                             console.log(error);
@@ -200,7 +246,7 @@ angular.module('Directives')
             }
         };
     }]);
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 angular.module('Directives')
     .directive('newQuestion', ['$filter', 'QuestionFactory', function ($filter, QuestionFactory) {
         return {
@@ -213,57 +259,13 @@ angular.module('Directives')
 
                 var model = scope.model;
 
-                function question(Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
-
-                    this.title = Title || scope.global.errorOcurred("The title cannot be empty");
-                    this.body = Body || scope.global.errorOcurred("The body canot be empty");
-                    this.username = Username;
-                    this.rating = Rating || 0;
-                    this.datetime = Datetime || new Date().toDateString();
-                    this.categories = Categories || scope.global.errorOcurred("You must input at least one category");
-                    this.userPicture = UserPicture;
-                }
-
-
-                scope.addQuestion = function () {
-
-                    try {
-                        var result = new question(model.title,
-                                                    model.body,
-                                                    model.username,
-                                                    model.rating,
-                                                    model.datetime,
-                                                    model.categories,
-                                                    model.userPicture);
-
-                        QuestionFactory.addQuestion(result);
-                    }
-                    catch (exception) {
-                        console.log("an exception ocurred");
-                        console.log(exception);
-                    }
-                }
-
-                scope.addDummyQuestion = function () {
-
-                    try {
-                        var result = new question("this is title", "this is body", "magestico", 5, new Date().toDateString(), ["category1", "category2"]);
-                        scope.global.questions.push(result);
-
-                    }
-                    catch (exception) {
-                        console.log("an exception ocurred");
-                        console.log(exception);
-                    }
-                }
 
 
 
-                scope.addDummyQuestion();
             }
         };
     }]);
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 angular.module('Directives')
     .directive('question', ['$filter', function ($filter) {
         return {
@@ -271,87 +273,149 @@ angular.module('Directives')
             templateUrl: 'templates/directives/question.html',
             transclude: true,
             replace: true,
-            scope: {
-                'model.questions': "="
-            },
+            scope: false,
             link: function (scope, element, attrs, controllers) {
 
-
-                if (attrs.$index != undefined) {
-
-                    scope.model = {};
-                    scope.model.question = scope.model.questions[attrs.$index];
-                }
-
+                scope.model = {};
+                scope.model.question = scope.question;
             }
         };
     }]);
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 angular.module('Factories', []);
 
 require('./factories/questionFactory.js');
 require('./factories/loginFactory.js');
+require('./factories/databaseFactory.js');
 
-},{"./factories/loginFactory.js":12,"./factories/questionFactory.js":13}],12:[function(require,module,exports){
+},{"./factories/databaseFactory.js":13,"./factories/loginFactory.js":14,"./factories/questionFactory.js":15}],13:[function(require,module,exports){
 angular.module('Factories')
 
-    .factory('LoginFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+    .factory('DatabaseFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
 
 
-        var LoginService = function () {
-
-            var LoginService = $resource('/main/login/:token', {}, {
-                'login': { method: 'POST' },
-            });
-
-            return LoginService;
-        }
-        return LoginService;
-
-    }])
-
-},{}],13:[function(require,module,exports){
-angular.module('Factories')
-
-    .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
         return {
-            addQuestion: function (question) {
 
-                var deferred = $q.defer();
+            update: function (Title, Body, Rating, Datetime, Categories) {
 
+                var update = $resource('/main/update_database/:token', {}, {
+                    'getDatabase': { method: 'POST' },
+                });
 
-                $http.get('/api/v1/movies/' + movie).success(function (data) {
-                    deferred.resolve(result);
-                }).error(function (error) {
+                return update;
+            },
 
-                    deferred.reject(event);
+            get: function () {
 
-                })
+                var get = $resource('/main/get_database', {}, {
+                    'getDatabase': { method: 'GET' },
+                });
 
-                return deferred.promise;
+                return get;
 
             }
 
+
+        };
+
+    }])
+
+},{}],14:[function(require,module,exports){
+angular.module('Factories')
+    .factory('LoginFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+
+        return {
+
+            login: function () {
+
+                var login = $resource('/main/login/:token', {}, {
+                    'login': { method: 'POST' },
+                });
+
+                return login;
+            }
 
 
         };
     }])
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+angular.module('Factories')
+
+    .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
+        return {
+
+            newQuestion: function (Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
+
+                function question(Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
+
+                    this.title = Title || $rootScope.global.errorOcurred("The title cannot be empty");
+                    this.body = Body || $rootScope.global.errorOcurred("The body canot be empty");
+                    this.username = Username;
+                    this.rating = Rating || 0;
+                    this.datetime = Datetime || new Date().toDateString();
+                    this.categories = Categories || $rootScope.global.errorOcurred("You must input at least one category");
+                    this.userpicture = UserPicture || "images/profile-placeholder.jpg";
+                }
+
+                return new question(Title, Body, Username, Rating, Datetime, Categories, UserPicture);
+            }
+
+
+        };
+    }])
+
+},{}],16:[function(require,module,exports){
 angular.module('Filters', []);
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 require('./app.js');
 
 require('./controllers.js');
+require('./services.js');
 require('./directives.js');
 require('./factories.js');
 require('./filters.js');
 
 
 require('../../templates/compiledhtml.js')
-},{"../../templates/compiledhtml.js":16,"./app.js":1,"./controllers.js":2,"./directives.js":4,"./factories.js":11,"./filters.js":14}],16:[function(require,module,exports){
+},{"../../templates/compiledhtml.js":20,"./app.js":1,"./controllers.js":2,"./directives.js":5,"./factories.js":12,"./filters.js":16,"./services.js":18}],18:[function(require,module,exports){
+angular.module('Services', []);
+
+require('./services/user.js');
+},{"./services/user.js":19}],19:[function(require,module,exports){
+angular.module('Services')
+    .factory('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+
+        var userService = function () {
+
+            function user(Username, Picture, Token, Email) {
+                this.username = Username;
+                this.picture = Picture;
+                this.token = Token;
+                this.email = Email;
+            }
+
+
+            this.currentUser;
+            var that = this;
+            this.newUser = function (Username, Picture, Token, Email) {
+                if (that.currentUser == null) {
+                    return new user(Username, Picture, Token, Email);
+                }
+                else {
+                    throw new RegExp("There can only be one user logged in, you are trying to log a second user that is wrong");
+                }
+            }
+        }
+
+
+        return userService;
+
+    }])
+
+},{}],20:[function(require,module,exports){
 angular.module('odigoapp').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -391,7 +455,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in model.questions | orderBy:rating | limitTo: 1\"></question>\r" +
+    "        <question ng-repeat=\"question in global.questions | orderBy:rating | limitTo: 1\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -399,7 +463,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in  model.questions\"></question>\r" +
+    "        <question ng-repeat=\"question in  global.questions\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -452,7 +516,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('templates/directives/new-question.html',
-    "<div>\r" +
+    "<div ng-controller=\"QuestionController\">\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -461,15 +525,13 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('templates/directives/question.html',
-    "<div ng-show=\"showerror\" class=\"ui error form segment\">\r" +
-    "\n" +
-    "\r" +
+    "<div>\r" +
     "\n" +
     "\r" +
     "\n" +
     "    <div class=\"header\">\r" +
     "\n" +
-    "        <img src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
+    "        <img ng-src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +
@@ -490,4 +552,4 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 }]);
 
-},{}]},{},[15]);
+},{}]},{},[17]);

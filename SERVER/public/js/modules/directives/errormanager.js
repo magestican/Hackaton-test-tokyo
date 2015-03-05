@@ -17,7 +17,7 @@ angular.module('Directives')
                         scope.model.showerror = true;
                     }
 
-                    throw new EventException(Description);
+                    throw new RegExp(Description);
                 }
 
                 scope.global.removeError = function () {

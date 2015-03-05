@@ -10,11 +10,11 @@
 
         <div class="ui horizontal divider">Top question of the community</div>
 
-        <question ng-repeat="question in model.questions | orderBy:rating | limitTo: 1"></question>
+        <question ng-repeat="question in global.questions | orderBy:rating | limitTo: 1"></question>
 
         <div class="ui horizontal divider">Other questions by the community</div>
 
-        <question ng-repeat="question in  model.questions"></question>
+        <question ng-repeat="question in  global.questions"></question>
 
     </div>
 
