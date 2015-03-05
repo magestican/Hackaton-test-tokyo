@@ -19,7 +19,11 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "    <login></login>\r" +
+    "    <div ng-if=\"model.userService.currentUser != null\">Hello {{model.userService.currentUser.username}}  <div ng-show=\"model.userService.currentUser.isAdmin\"> You are an admin!</div> </div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <login ng-if=\"model.userService.currentUser == null\"></login>\r" +
     "\n" +
     "    <error:manager></error:manager>\r" +
     "\n" +
@@ -124,8 +128,6 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "        {{model.question.body}}\r" +
     "\n" +
     "    </div>\r" +
-    "\n" +
-    "\r" +
     "\n" +
     "\r" +
     "\n" +

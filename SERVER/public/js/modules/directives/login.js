@@ -3,7 +3,7 @@ angular.module('Directives')
         return {
             restrict: 'E',
             templateUrl: 'templates/directives/login.html',
-            transclude: true,
+            transclude: false,
             replace: true,
             scope: false,
             link: function (scope, element, attrs, controllers) {
@@ -30,44 +30,30 @@ angular.module('Directives')
 
                         console.log("login success");
 
-                        //if success get user data
-                        debugger
-
-                        var login = new LoginFactory();
-                        login.login({ token: result.access_token }, function (data) {
+                        var login = LoginFactory.login
+                        login().login({ token: result.access_token }, function (data) {
                             console.log("login server result");
-                            console.log(data);
+
+                            //if success get user data
+                            if (data.result == "success") {
 
 
+                                var request = gapi.client.plus.people.get(
+                                {
+                                    'userId': 'me'
+                                });
+                                request.execute(function (resp) {
 
+                                    UserService.newUser(resp.displayName, resp.image.url, result.access_token, resp.emails[0].value)
+                                    scope.$apply();
+                                })
+                            }
                         }, function (error) {
                             console.log("error ocurred");
                             console.log(error);
 
                         });
 
-                        //var request = gapi.client.plus.people.get(
-                        //{
-                        //    'userId': 'me'
-                        //});
-                        //request.execute(function (resp) {
-                        //    var email = '';
-                        //    if (resp['emails']) {
-                        //        for (i = 0; i < resp['emails'].length; i++) {
-                        //            if (resp['emails'][i]['type'] == 'account') {
-                        //                email = resp['emails'][i]['value'];
-                        //            }
-                        //        }
-                        //    }
-
-                        //    var str = "Name:" + resp['displayName'] + "<br>";
-                        //    str += "Image:" + resp['image']['url'] + "<br>";
-                        //    str += "<img src='" + resp['image']['url'] + "' /><br>";
-
-                        //    str += "URL:" + resp['url'] + "<br>";
-                        //    str += "Email:" + email + "<br>";
-                        //    document.getElementById("profile").innerHTML = str;
-                        //});
 
                     }
                 }

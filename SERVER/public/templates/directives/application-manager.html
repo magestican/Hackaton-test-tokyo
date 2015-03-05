@@ -1,7 +1,9 @@
 ﻿
 <div ng-controller="MainController">
 
-    <login></login>
+    <div ng-if="model.userService.currentUser != null">Hello {{model.userService.currentUser.username}}  <div ng-show="model.userService.currentUser.isAdmin"> You are an admin!</div> </div>
+
+    <login ng-if="model.userService.currentUser == null"></login>
     <error:manager></error:manager>
 
     <new:question></new:question>

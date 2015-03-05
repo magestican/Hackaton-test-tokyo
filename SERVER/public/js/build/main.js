@@ -40,11 +40,11 @@ require('./controllers/main.js');
 require('./controllers/question.js');
 },{"./controllers/main.js":3,"./controllers/question.js":4}],3:[function(require,module,exports){
 angular.module('Controllers')
-    .controller('MainController', ['$scope', '$filter',
-    function ($scope, $filter) {
+    .controller('MainController', ['$scope', '$filter', 'UserService',
+    function ($scope, $filter, UserService) {
 
         $scope.global.questions = [];
-
+        $scope.model.userService = UserService;
 
     }]);
 },{}],4:[function(require,module,exports){
@@ -171,7 +171,7 @@ angular.module('Directives')
         return {
             restrict: 'E',
             templateUrl: 'templates/directives/login.html',
-            transclude: true,
+            transclude: false,
             replace: true,
             scope: false,
             link: function (scope, element, attrs, controllers) {
@@ -198,44 +198,30 @@ angular.module('Directives')
 
                         console.log("login success");
 
-                        //if success get user data
-                        debugger
-
-                        var login = new LoginFactory();
-                        login.login({ token: result.access_token }, function (data) {
+                        var login = LoginFactory.login
+                        login().login({ token: result.access_token }, function (data) {
                             console.log("login server result");
-                            console.log(data);
+
+                            //if success get user data
+                            if (data.result == "success") {
 
 
+                                var request = gapi.client.plus.people.get(
+                                {
+                                    'userId': 'me'
+                                });
+                                request.execute(function (resp) {
 
+                                    UserService.newUser(resp.displayName, resp.image.url, result.access_token, resp.emails[0].value)
+                                    scope.$apply();
+                                })
+                            }
                         }, function (error) {
                             console.log("error ocurred");
                             console.log(error);
 
                         });
 
-                        //var request = gapi.client.plus.people.get(
-                        //{
-                        //    'userId': 'me'
-                        //});
-                        //request.execute(function (resp) {
-                        //    var email = '';
-                        //    if (resp['emails']) {
-                        //        for (i = 0; i < resp['emails'].length; i++) {
-                        //            if (resp['emails'][i]['type'] == 'account') {
-                        //                email = resp['emails'][i]['value'];
-                        //            }
-                        //        }
-                        //    }
-
-                        //    var str = "Name:" + resp['displayName'] + "<br>";
-                        //    str += "Image:" + resp['image']['url'] + "<br>";
-                        //    str += "<img src='" + resp['image']['url'] + "' /><br>";
-
-                        //    str += "URL:" + resp['url'] + "<br>";
-                        //    str += "Email:" + email + "<br>";
-                        //    document.getElementById("profile").innerHTML = str;
-                        //});
 
                     }
                 }
@@ -386,32 +372,31 @@ angular.module('Services', []);
 require('./services/user.js');
 },{"./services/user.js":19}],19:[function(require,module,exports){
 angular.module('Services')
-    .factory('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+    .service('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
 
-        var userService = function () {
-
-            function user(Username, Picture, Token, Email) {
-                this.username = Username;
-                this.picture = Picture;
-                this.token = Token;
-                this.email = Email;
-            }
-
-
-            this.currentUser;
-            var that = this;
-            this.newUser = function (Username, Picture, Token, Email) {
-                if (that.currentUser == null) {
-                    return new user(Username, Picture, Token, Email);
-                }
-                else {
-                    throw new RegExp("There can only be one user logged in, you are trying to log a second user that is wrong");
-                }
-            }
+        function user(Username, Picture, Token, Email) {
+            this.username = Username;
+            this.picture = Picture;
+            this.token = Token;
+            this.email = Email;
+            debugger
+            this.isAdmin = window.admin == Email;
         }
 
 
-        return userService;
+        this.currentUser = null;
+        var that = this;
+        this.newUser = function (Username, Picture, Token, Email) {
+            if (that.currentUser == null) {
+                var newuser = new user(Username, Picture, Token, Email);
+                that.currentUser = newuser;
+
+                return newuser;
+            }
+            else {
+                throw new RegExp("There can only be one user logged in, you are trying to log a second user that is wrong");
+            }
+        }
 
     }])
 
@@ -437,7 +422,11 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "    <login></login>\r" +
+    "    <div ng-if=\"model.userService.currentUser != null\">Hello {{model.userService.currentUser.username}}  <div ng-show=\"model.userService.currentUser.isAdmin\"> You are an admin!</div> </div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <login ng-if=\"model.userService.currentUser == null\"></login>\r" +
     "\n" +
     "    <error:manager></error:manager>\r" +
     "\n" +
@@ -542,8 +531,6 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "        {{model.question.body}}\r" +
     "\n" +
     "    </div>\r" +
-    "\n" +
-    "\r" +
     "\n" +
     "\r" +
     "\n" +
