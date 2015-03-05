@@ -4,7 +4,7 @@
 // App
 ////////////////////////////////////////////////////////////
 
-var App = angular.module('odigoapp', ['ngRoute', 'Directives', 'Controllers', 'Factories', 'Filters']);
+var App = angular.module('odigoapp', ['ngRoute','ngResource', 'Directives', 'Controllers', 'Factories', 'Filters']);
 
 ////////////////////////////////////////////////////////////
 // CONFIG
@@ -20,11 +20,18 @@ App.run(function ($rootScope) {
 });
 
 
-App.config(['$routeProvider', function ($routeProvider) {
+App.config(['$routeProvider', '$httpProvider', function ($routeProvider, provider) {
+    
 
+    //ruby stuff
+    provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+
+
+    //no need to use routes for this project
+    /*
     $routeProvider.when('/', {
         controller: 'MainController'
-    });
+    });*/
 }]);
 },{}],2:[function(require,module,exports){
 angular.module('Controllers', []);
@@ -145,34 +152,45 @@ angular.module('Directives')
                 var reference = scope.global.user;
                 window.loginCallback = function (result) {
                     if (result['status']['signed_in']) {
+
+                        console.log("login success");
+
                         //if success get user data
+                        debugger
 
-                        LoginFactory.login(result.access_token);
+                        var login = new LoginFactory();
+                        login.login({ token: result.access_token }, function (data) {
+                            console.log("login server result");
+                            console.log(data);
+                        }, function (error) {
+                            console.log("error ocurred");
+                            console.log(error);
 
-
-
-                        var request = gapi.client.plus.people.get(
-                        {
-                            'userId': 'me'
                         });
-                        request.execute(function (resp) {
-                            var email = '';
-                            if (resp['emails']) {
-                                for (i = 0; i < resp['emails'].length; i++) {
-                                    if (resp['emails'][i]['type'] == 'account') {
-                                        email = resp['emails'][i]['value'];
-                                    }
-                                }
-                            }
 
-                            var str = "Name:" + resp['displayName'] + "<br>";
-                            str += "Image:" + resp['image']['url'] + "<br>";
-                            str += "<img src='" + resp['image']['url'] + "' /><br>";
+                        //var request = gapi.client.plus.people.get(
+                        //{
+                        //    'userId': 'me'
+                        //});
+                        //request.execute(function (resp) {
+                        //    var email = '';
+                        //    if (resp['emails']) {
+                        //        for (i = 0; i < resp['emails'].length; i++) {
+                        //            if (resp['emails'][i]['type'] == 'account') {
+                        //                email = resp['emails'][i]['value'];
+                        //            }
+                        //        }
+                        //    }
 
-                            str += "URL:" + resp['url'] + "<br>";
-                            str += "Email:" + email + "<br>";
-                            document.getElementById("profile").innerHTML = str;
-                        });
+                        //    var str = "Name:" + resp['displayName'] + "<br>";
+                        //    str += "Image:" + resp['image']['url'] + "<br>";
+                        //    str += "<img src='" + resp['image']['url'] + "' /><br>";
+
+                        //    str += "URL:" + resp['url'] + "<br>";
+                        //    str += "Email:" + email + "<br>";
+                        //    document.getElementById("profile").innerHTML = str;
+                        //});
+
                     }
                 }
 
@@ -272,8 +290,27 @@ angular.module('Directives')
 angular.module('Factories', []);
 
 require('./factories/questionFactory.js');
+require('./factories/loginFactory.js');
 
-},{"./factories/questionFactory.js":12}],12:[function(require,module,exports){
+},{"./factories/loginFactory.js":12,"./factories/questionFactory.js":13}],12:[function(require,module,exports){
+angular.module('Factories')
+
+    .factory('LoginFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+
+
+        var LoginService = function () {
+
+            var LoginService = $resource('/main/login/:token', {}, {
+                'login': { method: 'POST' },
+            });
+
+            return LoginService;
+        }
+        return LoginService;
+
+    }])
+
+},{}],13:[function(require,module,exports){
 angular.module('Factories')
 
     .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
@@ -300,10 +337,10 @@ angular.module('Factories')
         };
     }])
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 angular.module('Filters', []);
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 require('./app.js');
 
@@ -314,7 +351,7 @@ require('./filters.js');
 
 
 require('../../templates/compiledhtml.js')
-},{"../../templates/compiledhtml.js":15,"./app.js":1,"./controllers.js":2,"./directives.js":4,"./factories.js":11,"./filters.js":13}],15:[function(require,module,exports){
+},{"../../templates/compiledhtml.js":16,"./app.js":1,"./controllers.js":2,"./directives.js":4,"./factories.js":11,"./filters.js":14}],16:[function(require,module,exports){
 angular.module('odigoapp').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -453,4 +490,4 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 }]);
 
-},{}]},{},[14]);
+},{}]},{},[15]);

@@ -3,7 +3,7 @@
 // App
 ////////////////////////////////////////////////////////////
 
-var App = angular.module('odigoapp', ['ngRoute', 'Directives', 'Controllers', 'Factories', 'Filters']);
+var App = angular.module('odigoapp', ['ngRoute','ngResource', 'Directives', 'Controllers', 'Factories', 'Filters']);
 
 ////////////////////////////////////////////////////////////
 // CONFIG
@@ -19,9 +19,16 @@ App.run(function ($rootScope) {
 });
 
 
-App.config(['$routeProvider', function ($routeProvider) {
+App.config(['$routeProvider', '$httpProvider', function ($routeProvider, provider) {
+    
 
+    //ruby stuff
+    provider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+
+
+    //no need to use routes for this project
+    /*
     $routeProvider.when('/', {
         controller: 'MainController'
-    });
+    });*/
 }]);

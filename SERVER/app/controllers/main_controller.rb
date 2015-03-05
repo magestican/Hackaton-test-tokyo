@@ -1,9 +1,11 @@
 class MainController < ActionController::Base
-  @@logged_users = Array.new
+  @@logged_users = Array.new(500)
   $adminemail = "magestican.visualkei@gmail.com"
 
   def login
-	@@loggedUsers.push(params[:token])
+	@@logged_users.push(params[:token])
+	output = {'result' => 'success' }.to_json
+	render :json => output
   end
   
 
