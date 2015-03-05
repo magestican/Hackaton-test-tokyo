@@ -65,3 +65,7 @@ you can also run the following command if you made a change with grunt watch not
 if deploying to production run grunt production, it will minify (uglify) your files so that they will weight less and the page will load faster
 
 
+
+/******************IMPORTANT******************************//
+
+TO SET WHO IS THE ADMIN MODIFY THE VARIABLE $adminemail in the maincontroller in the ruby server code
