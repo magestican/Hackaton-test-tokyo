@@ -93,14 +93,13 @@ angular.module('Controllers')
 angular.module('Directives', []);
 
 require('./directives/answer.js');
-require('./directives/errormanager.js');
-require('./directives/newquestion.js');
+require('./directives/errorManager.js');
+require('./directives/newQuestion.js');
 require('./directives/question.js');
 require('./directives/applicationManager.js');
 require('./directives/login.js');
-
-
-},{"./directives/answer.js":6,"./directives/applicationManager.js":7,"./directives/errormanager.js":8,"./directives/login.js":9,"./directives/newquestion.js":10,"./directives/question.js":11}],6:[function(require,module,exports){
+require('./directives/newQuestionModal.js');
+},{"./directives/answer.js":6,"./directives/applicationManager.js":7,"./directives/errorManager.js":8,"./directives/login.js":9,"./directives/newQuestion.js":10,"./directives/newQuestionModal.js":11,"./directives/question.js":12}],6:[function(require,module,exports){
 angular.module('Directives')
     .directive('answer', ['$filter', function ($filter) {
         return {
@@ -245,13 +244,55 @@ angular.module('Directives')
 
                 var model = scope.model;
 
-
-
-
             }
         };
     }]);
 },{}],11:[function(require,module,exports){
+angular.module('Directives')
+    .directive('newQuestionModal', ['$filter', 'CategoryService', 'QuestionFactory', 'UserService', function ($filter, CategoryService, QuestionFactory, UserService) {
+        return {
+            restrict: 'E',
+            templateUrl: 'templates/directives/new-question-modal.html',
+            transclude: true,
+            replace: true,
+            scope: false,
+            link: function (scope, element, attrs, controllers) {
+
+                //a lot of ugly jquery stuff
+                scope.global.showNewQuestionModal = function () {
+
+                    $(element[0]).modal('show');
+                }
+
+                $(element[0]).find("#categorySelector").select2({
+                    tags: CategoryService.categories
+                })
+
+
+
+
+
+                scope.addQuestion = function () {
+
+                    $('ul.select2-selection__rendered').find('li.select2-selection__choice').each(function (index, object) {
+
+
+                        scope.model.categories = $(object).text;
+
+                    })
+
+
+                    QuestionFactory.newQuestion(scope.model.title, scope.model.body, UserService.currentUser.username, 0, new Date().toDateString(), scope.model.categories, UserService.currentUser.picture);
+
+                    scope.model.title = null;
+                    scope.model.body = null;
+                    scope.model.categories = null;
+                }
+
+            }
+        };
+    }]);
+},{}],12:[function(require,module,exports){
 angular.module('Directives')
     .directive('question', ['$filter', function ($filter) {
         return {
@@ -267,14 +308,14 @@ angular.module('Directives')
             }
         };
     }]);
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 angular.module('Factories', []);
 
 require('./factories/questionFactory.js');
 require('./factories/loginFactory.js');
 require('./factories/databaseFactory.js');
 
-},{"./factories/databaseFactory.js":13,"./factories/loginFactory.js":14,"./factories/questionFactory.js":15}],13:[function(require,module,exports){
+},{"./factories/databaseFactory.js":14,"./factories/loginFactory.js":15,"./factories/questionFactory.js":16}],14:[function(require,module,exports){
 angular.module('Factories')
 
     .factory('DatabaseFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
@@ -306,7 +347,7 @@ angular.module('Factories')
 
     }])
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 angular.module('Factories')
     .factory('LoginFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
 
@@ -325,7 +366,7 @@ angular.module('Factories')
         };
     }])
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 angular.module('Factories')
 
     .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
@@ -351,10 +392,10 @@ angular.module('Factories')
         };
     }])
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 angular.module('Filters', []);
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 require('./app.js');
 
@@ -366,11 +407,35 @@ require('./filters.js');
 
 
 require('../../templates/compiledhtml.js')
-},{"../../templates/compiledhtml.js":20,"./app.js":1,"./controllers.js":2,"./directives.js":5,"./factories.js":12,"./filters.js":16,"./services.js":18}],18:[function(require,module,exports){
+},{"../../templates/compiledhtml.js":22,"./app.js":1,"./controllers.js":2,"./directives.js":5,"./factories.js":13,"./filters.js":17,"./services.js":19}],19:[function(require,module,exports){
 angular.module('Services', []);
 
 require('./services/user.js');
-},{"./services/user.js":19}],19:[function(require,module,exports){
+require('./services/categories.js');
+},{"./services/categories.js":20,"./services/user.js":21}],20:[function(require,module,exports){
+angular.module('Services')
+    .service('CategoryService', ['$rootScope', '$q', '$resource', 'UserService', function ($rootScope, $q, $resource, UserService) {
+
+        function category(name) {
+
+        }
+        this.categories = ['Funny', 'Intellectual', 'Super smart'];
+        var that = this;
+
+        this.newCategory = function (name) {
+
+            if (UserService.currentUser.isAdmin) {
+                that.categories.push(new category(name));
+            }
+            else {
+                scope.global.errorOcurred("You are not an admin so you cannot add categories");
+                throw new RegExp("You are not an admin so you cannot add categories");
+            }
+        }
+
+    }])
+
+},{}],21:[function(require,module,exports){
 angular.module('Services')
     .service('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
 
@@ -379,7 +444,6 @@ angular.module('Services')
             this.picture = Picture;
             this.token = Token;
             this.email = Email;
-            debugger
             this.isAdmin = window.admin == Email;
         }
 
@@ -400,7 +464,7 @@ angular.module('Services')
 
     }])
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 angular.module('odigoapp').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -422,17 +486,23 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
+    "    <error:manager></error:manager>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
     "    <div ng-if=\"model.userService.currentUser != null\">Hello {{model.userService.currentUser.username}}  <div ng-show=\"model.userService.currentUser.isAdmin\"> You are an admin!</div> </div>\r" +
     "\n" +
     "\r" +
     "\n" +
     "    <login ng-if=\"model.userService.currentUser == null\"></login>\r" +
     "\n" +
-    "    <error:manager></error:manager>\r" +
+    "\r" +
     "\n" +
     "\r" +
     "\n" +
     "    <new:question></new:question>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -504,8 +574,102 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
   );
 
 
+  $templateCache.put('templates/directives/new-question-modal.html',
+    "<div class=\"ui fullscreen modal\" style=\"top: 3408px;\">\r" +
+    "\n" +
+    "    <i class=\"close icon\"></i>\r" +
+    "\n" +
+    "    <div class=\"header\">\r" +
+    "\n" +
+    "        Add a new question\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "    <div class=\"content\">\r" +
+    "\n" +
+    "        <div class=\"ui form\">\r" +
+    "\n" +
+    "            <h4 class=\"ui dividing header\">Title for your question</h4>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "            <div class=\"ui corner labeled input\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "                <input type=\"text\" placeholder=\"Required Field\">\r" +
+    "\n" +
+    "                <div class=\"ui corner label\">\r" +
+    "\n" +
+    "                    <i class=\"asterisk icon\"></i>\r" +
+    "\n" +
+    "                </div>\r" +
+    "\n" +
+    "            </div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "            <div class=\"field\">\r" +
+    "\n" +
+    "                <label>Description</label>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "                <textarea></textarea>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "                <label>Select a category</label>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "                <input type=\"text\" placeholder=\"Category\" id=\"categorySelector\" multiple=\"\" style=\"width:500px\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "            </div>\r" +
+    "\n" +
+    "        </div>\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "    <div class=\"actions\">\r" +
+    "\n" +
+    "        <div class=\"ui button\">Cancel</div>\r" +
+    "\n" +
+    "        <div class=\"ui green button\">Add</div>\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "</div>\r" +
+    "\n"
+  );
+
+
   $templateCache.put('templates/directives/new-question.html',
+    "\r" +
+    "\n" +
     "<div ng-controller=\"QuestionController\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <new:question:modal></new:question:modal>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <div ng-click=\"global.showNewQuestionModal()\" class=\"ui fullscreen demo button\">Add question</div>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -539,4 +703,4 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
 
 }]);
 
-},{}]},{},[17]);
+},{}]},{},[18]);

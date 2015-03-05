@@ -10,9 +10,6 @@
 
                 var model = scope.model;
 
-
-
-
             }
         };
     }]);

@@ -6,7 +6,6 @@
             this.picture = Picture;
             this.token = Token;
             this.email = Email;
-            debugger
             this.isAdmin = window.admin == Email;
         }
 

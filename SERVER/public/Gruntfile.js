@@ -10,7 +10,7 @@ module.exports = function (grunt) {
         watch: {
             templates: {
                 files: 'templates/**/*.html',
-                tasks: ['ngtemplates']
+                tasks: ['ngtemplates', 'browserify']
             },
             js: {
                 files: 'js/modules/**/*.js',
@@ -70,6 +70,7 @@ module.exports = function (grunt) {
                     'js/lib/angular.min.js',
                     'js/lib/angular-route.js',
                     'js/lib/angular-resource.js',
+                    'js/lib/select2.js',
 					'js/lib/semantic.js',
                 ],
                 dest: 'js/build/lib.js'
