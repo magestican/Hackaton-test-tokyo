@@ -11,15 +11,19 @@
                 //a lot of ugly jquery stuff
                 scope.global.showNewQuestionModal = function () {
 
-                    $(element[0]).modal('show');
+                    if (UserService.currentUser == null) {
+                        //the user cant post if he or she is not logged
+                        scope.global.errorOcurred("You must login to ask a new question");
+                    }
+                    else {
+                        scope.global.removeError();
+                        $(element[0]).modal('show');
+                    }
                 }
 
                 $(element[0]).find("#categorySelector").select2({
                     tags: CategoryService.categories
                 })
-
-
-
 
 
                 scope.addQuestion = function () {

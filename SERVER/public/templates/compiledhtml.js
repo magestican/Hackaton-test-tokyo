@@ -33,7 +33,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "    <new:question></new:question>\r" +
+    "    <new:question ></new:question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -78,9 +78,9 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div class=\"ui error message\">\r" +
     "\n" +
-    "        <div class=\"header\">{{model.errorMessage}}</div>\r" +
+    "        <div class=\"header\">An error has ocurred</div>\r" +
     "\n" +
-    "        <p>Error message long description</p>\r" +
+    "        <p>{{model.errorMessage}}</p>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
