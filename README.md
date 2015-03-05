@@ -22,13 +22,13 @@ install rails after you make ruby work
 
 ►gem install rails -v 4.0.0
 
-launch local server by going to the folder were you downloaded the repository and running the following ruby file
+launch local server by going to the folder were you downloaded the repository and running the following command
 
-►server.rb 
+►rails server
 
 to see the page navigate to 
 
-►http://localhost:2345/
+►http://localhost:3000/
 
 the server will automatically serve the index.html file when you do this and you can start using the website
 
