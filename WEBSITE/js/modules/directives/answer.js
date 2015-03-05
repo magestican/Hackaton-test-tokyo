@@ -1,8 +1,8 @@
 angular.module('Directives')
-    .directive('dummy', ['$filter', function ($filter) {
+    .directive('answer', ['$filter', function ($filter) {
         return {
             restrict: 'E',
-            template: '<div>dummy</div>',
+            template: 'answer.html',
             transclude: true,
             replace: true,
             scope: false,
