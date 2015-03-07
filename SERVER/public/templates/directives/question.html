@@ -1,11 +1,30 @@
 ﻿<div>
 
+    <div class="ui hidden divider"></div>
+
+    <div ng-if="$index > 0" class="ui horizontal divider"> {{model.question.datetime}}</div>
+
+
     <div class="header">
+
+        <a class="user">
+            {{model.question.username}}
+        </a>
         <img ng-src="{{model.question.userpicture}}" class="ui avatar image">
         {{model.question.title}}
     </div>
+
+
+    <div class="ui hidden divider"></div>
     <div class="description">
         {{model.question.body}}
     </div>
+
+    <div class="ui hidden divider"></div>
+    <div class="mini ui blue button">
+        <i class="like icon"></i>
+        Like
+    </div>
+    <div class="ui hidden divider"></div>
 
 </div>

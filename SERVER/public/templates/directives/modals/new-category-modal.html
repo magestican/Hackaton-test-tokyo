@@ -1,0 +1,27 @@
+﻿<div class="ui fullscreen modal" style="top: 3408px;">
+    <i class="close icon"></i>
+    <div class="header">
+        Add a new category
+    </div>
+    <div class="content">
+        <div class="ui form">
+
+            <modal:error:manager></modal:error:manager>
+
+            <h4 class="ui dividing header">Input the name of your category</h4>
+            <div class="ui corner labeled input">
+
+                <input ng-model="model.categoryName" type="text" placeholder="Required Field">
+                <div class="ui corner label">
+                    <i class="asterisk icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="select2-actions-override">
+        <div ng-click="addCategory()" class="ui green button">Add</div>
+        <div ng-click="cancelAddCategory()" class="ui button">Cancel</div>
+    </div>
+
+
+</div>

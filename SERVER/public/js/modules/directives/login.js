@@ -14,6 +14,7 @@ angular.module('Directives')
 
                 scope.login = function () {
 
+                    scope.global.removeError();
                     //login parameters
                     var myParams = {
                         'clientid': '28552151452-v86ec9nn8jm6r4de5sghds4bmq4n1ccb.apps.googleusercontent.com',

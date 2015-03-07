@@ -3,12 +3,35 @@
 
     <error:manager></error:manager>
 
-    <div ng-if="model.userService.currentUser != null">Hello {{model.userService.currentUser.username}}  <div ng-show="model.userService.currentUser.isAdmin"> You are an admin!</div> </div>
+
+    <div ng-if="model.userService.currentUser != null" class="ui fluid vertical steps">
+        <a class="step">
+            <img ng-src="{{model.userService.currentUser.picture}}" class="ui avatar image">
+            <div class="title">Hello {{model.userService.currentUser.username}}</div>
+            <div class="content">
+
+                <div ng-show="model.userService.currentUser.isAdmin" class="description">You are an admin!</div>
+            </div>
+        </a>
+    </div>
+
+
+    <div class="ui hidden divider"></div>
+
 
     <login ng-if="model.userService.currentUser == null"></login>
 
 
-    <new:question ></new:question>
+    <div ng-click="global.showNewQuestionModal()" class="ui labeled button">Add question</div>
+
+
+
+    <div ng-if="model.userService.currentUser != null && model.userService.currentUser.isAdmin" ng-click="global.showNewCategoryModal()" class="ui right fullscreen demo button">Add Category</div>
+
+    <new:question:manager></new:question:manager>
+
+    <new:category:manager></new:category:manager>
+
 
 
     <div class="ui center aligned segment">
@@ -25,5 +48,7 @@
 
 
     <reply></reply>
+
+
 
 </div>

@@ -173,7 +173,7 @@
   height: auto;
   width: auto;
   opacity: 0;
-  z-index: 1199;
+  z-index: 11999;
   background-color: #fff;
   filter: alpha(opacity=0); }
 
@@ -33099,6 +33099,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 .icon-stackoverflow:before {
   content: "\e600";
+}
+
+.select2-actions-override {
+  background: #efefef;
+  padding: 1rem 2rem;
+  border-top: 1px solid rgba(39, 41, 43, 0.15);
+  text-align: right;
 }
 
 /*# sourceMappingURL=sassmain.css.map */

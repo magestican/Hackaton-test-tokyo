@@ -1,0 +1,40 @@
+﻿<div class="ui fullscreen modal" style="top: 3408px;">
+    <i class="close icon"></i>
+    <div class="header">
+        Add a new question
+    </div>
+    <div class="content">
+        <div class="ui form">
+
+            <modal:error:manager></modal:error:manager>
+
+            <h4 class="ui dividing header">Title for your question</h4>
+            <div class="ui corner labeled input">
+
+                <input ng-model="model.title" type="text" placeholder="Required Field">
+                <div class="ui corner label">
+                    <i class="asterisk icon"></i>
+                </div>
+            </div>
+
+
+            <div class="field">
+                <label>Description</label>
+
+                <textarea ng-model="model.body"></textarea>
+
+                <label>Select a category</label>
+
+                <input type="text" placeholder="Category" id="categorySelector" multiple="" tabindex="-1" style="width:500px">
+
+            </div>
+        </div>
+    </div>
+    <div class="select2-actions-override">
+        <div ng-click="addQuestion()" class="ui green button">Add</div>
+        <div ng-click="cancelAddQuestion()" class="ui button">Cancel</div>
+    </div>
+
+
+
+</div>
