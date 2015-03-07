@@ -213,7 +213,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div class=\"select2-actions-override\">\r" +
     "\n" +
-    "        <div ng-click=\"addCategory()\" class=\"ui green button\">Add</div>\r" +
+    "        <div ng-click=\"addCategory()\" class=\"ui blue button\">Add</div>\r" +
     "\n" +
     "        <div ng-click=\"cancelAddCategory()\" class=\"ui button\">Cancel</div>\r" +
     "\n" +
@@ -295,7 +295,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div class=\"select2-actions-override\">\r" +
     "\n" +
-    "        <div ng-click=\"addQuestion()\" class=\"ui green button\">Add</div>\r" +
+    "        <div ng-click=\"addQuestion()\" class=\"ui blue button\">Add</div>\r" +
     "\n" +
     "        <div ng-click=\"cancelAddQuestion()\" class=\"ui button\">Cancel</div>\r" +
     "\n" +
