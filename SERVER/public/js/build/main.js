@@ -41,9 +41,17 @@ require('./controllers/question.js');
 require('./controllers/category.js');
 },{"./controllers/category.js":3,"./controllers/main.js":4,"./controllers/question.js":5}],3:[function(require,module,exports){
 angular.module('Controllers')
-    .controller('CategoryController', ['$scope', '$filter', 'QuestionFactory',
-    function ($scope, $filter, QuestionFactory) {
+    .controller('CategoryController', ['$scope', '$filter', 'CategoryService', 'DatabaseFactory',
+    function ($scope, $filter, CategoryService, DatabaseFactory) {
 
+
+        DatabaseFactory.getCategories().getCategories({},
+           function (data) {
+               CategoryService.categories = JSON.parse(data.result);
+           },
+           function (error) {
+               console.log(error);
+           })
 
     }]);
 },{}],4:[function(require,module,exports){
@@ -57,44 +65,21 @@ angular.module('Controllers')
     }]);
 },{}],5:[function(require,module,exports){
 angular.module('Controllers')
-    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory','DatabaseFactory',
+    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory', 'DatabaseFactory',
     function ($scope, $filter, QuestionFactory, DatabaseFactory) {
 
 
-        $scope.addQuestion = function () {
 
-            try {
-                var result = new QuestionFactory.newQuestion(model.title,
-                                            model.body,
-                                            model.username,
-                                            model.rating,
-                                            model.datetime,
-                                            model.categories,
-                                            model.userPicture);
-
-                QuestionFactory.addQuestion(result);
-            }
-            catch (exception) {
-                console.log("an exception ocurred");
-                console.log(exception);
-            }
-        }
-
-        $scope.addDummyQuestion = function () {
-            try {
-                var result = new QuestionFactory.newQuestion("How do I code?", "Hello everyone I wanted to know how to code..thanks", "magestico", 5, new Date().toDateString(), ["coding", "supercoding"]);
-                $scope.global.questions.push(result);
-
-            }
-            catch (exception) {
-                console.log("an exception ocurred");
-                console.log(exception);
-            }
-        }
+        //initialize with server data like mobile apps do..
+        DatabaseFactory.getQuestions().getQuestions({},
+            function (data) {
+                $scope.global.questions = JSON.parse(data.result);
+            },
+            function (error) {
+                console.log(error);
+            })
 
 
-
-        $scope.addDummyQuestion();
 
     }]);
 },{}],6:[function(require,module,exports){
@@ -639,7 +624,7 @@ require('./services/user.js');
 require('./services/categories.js');
 },{"./services/categories.js":24,"./services/user.js":25}],24:[function(require,module,exports){
 angular.module('Services')
-    .service('CategoryService', ['$rootScope', '$q', '$resource', 'UserService', function ($rootScope, $q, $resource, UserService) {
+    .service('CategoryService', ['$rootScope', '$q', '$resource', 'UserService', 'DatabaseFactory', function ($rootScope, $q, $resource, UserService, DatabaseFactory) {
 
         function category(name) {
             this.name = name;
@@ -654,13 +639,13 @@ angular.module('Services')
 
 
                     //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+                    var qq = new category(name);
 
                     DatabaseFactory.getCategories().getCategories({},
                     function (data) {
 
-                        debugger
                         that.categories = JSON.parse((data.result != "" ? data.result : []));
-                        that.categories.push(qq);
+                        that.categories.push(qq.name);
 
                         DatabaseFactory.updateCategories().updateCategories({
                             categories: JSON.stringify(that.categories),

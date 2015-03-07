@@ -1,5 +1,5 @@
 ﻿angular.module('Services')
-    .service('CategoryService', ['$rootScope', '$q', '$resource', 'UserService', function ($rootScope, $q, $resource, UserService) {
+    .service('CategoryService', ['$rootScope', '$q', '$resource', 'UserService', 'DatabaseFactory', function ($rootScope, $q, $resource, UserService, DatabaseFactory) {
 
         function category(name) {
             this.name = name;
@@ -14,13 +14,13 @@
 
 
                     //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+                    var qq = new category(name);
 
                     DatabaseFactory.getCategories().getCategories({},
                     function (data) {
 
-                        debugger
                         that.categories = JSON.parse((data.result != "" ? data.result : []));
-                        that.categories.push(qq);
+                        that.categories.push(qq.name);
 
                         DatabaseFactory.updateCategories().updateCategories({
                             categories: JSON.stringify(that.categories),

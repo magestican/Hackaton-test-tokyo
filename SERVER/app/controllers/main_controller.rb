@@ -30,7 +30,7 @@ class MainController < ActionController::Base
 	if @@logged_users.include?(params[:token]) then
 		open("db/categories.json", 'w') do |f|
 			f.write(params[:categories])
-			output = {'result' => open('db/categories.json').read }
+			output = {'result' => params[:categories] }
 			render :json => output
 		end
 	end
@@ -40,7 +40,7 @@ class MainController < ActionController::Base
 	if @@logged_users.include?(params[:token]) then
 		open("db/questions.json", 'w') do |f|
 			f.write(params[:questions])
-			output = {'result' => open('db/questions.json').read }
+			output = {'result' => params[:questions] }
 			render :json => output
 		end
 	end
