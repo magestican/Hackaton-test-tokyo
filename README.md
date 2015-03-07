@@ -22,7 +22,7 @@ install rails after you make ruby work
 
 ►gem install rails -v 4.0.0
 
-launch local server by going to the folder were you downloaded the repository and running the following command
+launch local server by going to the folder were you downloaded the repository and then into the SERVER folder and after that run the following command
 
 ►rails server
 
@@ -39,7 +39,7 @@ install nodejs which will also install npm
 
 ►http://nodejs.org/download/
 
-go to the folder were you downloaded the repository and type :
+go to the folder were you downloaded the repository, then get inside the folder SERVER and type :
 
 ►node install
 
@@ -50,7 +50,6 @@ this will read the packages.js file and download all the prerequired libraries t
 because we use ass we need to install compass
 
 ►gem install compass
-
 
 now to finish, execute 
 
