@@ -1,6 +1,14 @@
 ﻿angular.module('Factories')
 
     .factory('QuestionFactory', ['$rootScope', '$q', 'DatabaseFactory', 'UserService', function ($rootScope, $q, DatabaseFactory, UserService) {
+
+        function guidGenerator() {
+            var S4 = function () {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            };
+            return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+        }
+
         return {
 
             newQuestion: function (Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
@@ -20,6 +28,7 @@
                     this.datetime = Datetime || new Date().toDateString();
                     this.categories = Categories || throwError("You must input at least one category");
                     this.userpicture = UserPicture || "images/profile-placeholder.jpg";
+                    this.id = guidGenerator();
                 }
 
 
@@ -29,7 +38,7 @@
 
                 DatabaseFactory.getQuestions().getQuestions({},
                     function (data) {
-                        debugger
+                        
                         $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
 
                         $rootScope.global.questions.push(qq);
@@ -42,15 +51,56 @@
 
                             $rootScope.global.questions = JSON.parse(data2.result);
                             console.log("database updated");
+                        },
+                        function (error2) {
+                            console.log(error2);
                         })
 
+                    },
+                    function (error) {
+                        console.log(error);
                     })
 
+            },
+
+            deleteQuestion: function (id) {
+
+                //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+
+                DatabaseFactory.getQuestions().getQuestions({},
+                    function (data) {
+
+                        $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
+
+                        var found = false;
+
+                        for (var i = 0; i < $rootScope.global.questions.length ; i++) {
+
+                            var qq = $rootScope.global.questions[i];
+
+                            if (qq.id == id) {
+                                delete $rootScope.global.questions[i]
+                                found = true;
+                            }
+                        }
+
+                        if (found) {
 
 
+                            DatabaseFactory.updateQuestions().updateQuestions({
+                                questions: JSON.stringify($rootScope.global.questions),
+                                token: UserService.currentUser.token
+                            },
+                            function (data2) {
+
+                                $rootScope.global.questions = JSON.parse(data2.result);
+                                console.log("database updated");
+                            })
+
+                        }
 
 
-
+                    })
             }
 
 
