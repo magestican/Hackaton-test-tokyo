@@ -387,7 +387,15 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
     "    <div class=\"ui hidden divider\"></div>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "    <div class=\"mini ui blue button\">\r" +
     "\n" +
@@ -398,6 +406,18 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "    </div>\r" +
     "\n" +
     "    <div class=\"ui hidden divider\"></div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <div ng-repeat=\"category in model.question.categories\" class=\"ui  mini button\">\r" +
+    "\n" +
+    "        {{category}}\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "\r" +
     "\n" +

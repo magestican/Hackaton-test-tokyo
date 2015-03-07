@@ -31,8 +31,7 @@ angular.module('Directives')
 
                         console.log("login success");
 
-                        var login = LoginFactory.login
-                        login().login({ token: result.access_token }, function (data) {
+                        LoginFactory.login().login({ token: result.access_token }, function (data) {
                             console.log("login server result");
 
                             //if success get user data

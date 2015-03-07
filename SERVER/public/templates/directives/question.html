@@ -20,11 +20,21 @@
         {{model.question.body}}
     </div>
 
+
+
+
     <div class="ui hidden divider"></div>
+
     <div class="mini ui blue button">
         <i class="like icon"></i>
         Like
     </div>
     <div class="ui hidden divider"></div>
+
+
+    <div ng-repeat="category in model.question.categories" class="ui  mini button">
+        {{category}}
+    </div>
+
 
 </div>

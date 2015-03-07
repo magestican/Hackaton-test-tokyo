@@ -53,7 +53,7 @@
                         })
                     }
 
-                  
+
                 }
 
 
@@ -76,8 +76,8 @@
 
                     try {
 
-                        var question = QuestionFactory.newQuestion(model.title, model.body, UserService.currentUser.username, 0, new Date().toDateString(), model.categories, UserService.currentUser.picture);
-                        scope.global.questions.push(question);
+                        QuestionFactory.newQuestion(model.title, model.body, UserService.currentUser.username, 0, new Date().toDateString(), model.categories, UserService.currentUser.picture);
+
 
 
                         scope.resetQuestionModal();

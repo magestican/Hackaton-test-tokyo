@@ -13,20 +13,34 @@ class MainController < ActionController::Base
     MainController.new
   end
   
-  def getdatabase
-	respond_to do |format|
-		format.json { render :text => File.open('db/database.json').read }
+  
+  #i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..sorry :(
+  
+  def get_questions
+	JSON.parse (File.open('db/questions.json').read )
+  end
+  
+  def get_categories
+	JSON.parse ( File.open('db/categories.json').read )
+  end
+  
+  def update_categories
+	if @@logged_users.include?(params[:token]) then
+		File.open("db/categories.json", 'w') do |f|
+			f.write(params[:categories])
+		end
 	end
   end
   
-  def updatedatabase
+  def update_questions
 	if @@logged_users.include?(params[:token]) then
-		File.open("db/database.json", 'w') do |f|
-			f.write(content)
+		File.open("db/questions.json", 'w') do |f|
+			f.write(params[:questions])
 		end
 	end
-	
   end
+  
+  
   
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

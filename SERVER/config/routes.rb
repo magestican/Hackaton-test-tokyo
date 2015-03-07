@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   
   post "/main/login" => "main#login"
   
+  post "/main/update_categories" => "main#update_categories"
+  
+  post "/main/update_questions" => "main#update_questions"
+  
+  get "/main/get_questions" => "main#get_questions"
+  
+  get "/main/get_categories" => "main#get_categories"
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

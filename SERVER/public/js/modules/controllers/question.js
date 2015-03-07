@@ -1,6 +1,6 @@
 angular.module('Controllers')
-    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory',
-    function ($scope, $filter, QuestionFactory) {
+    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory','DatabaseFactory',
+    function ($scope, $filter, QuestionFactory, DatabaseFactory) {
 
 
         $scope.addQuestion = function () {
@@ -24,7 +24,7 @@ angular.module('Controllers')
 
         $scope.addDummyQuestion = function () {
             try {
-                var result = new QuestionFactory.newQuestion("How do I code?", "Hello everyone I wanted to know how to code..thanks", "magestico", 5, new Date().toDateString(), ["category1", "category2"]);
+                var result = new QuestionFactory.newQuestion("How do I code?", "Hello everyone I wanted to know how to code..thanks", "magestico", 5, new Date().toDateString(), ["coding", "supercoding"]);
                 $scope.global.questions.push(result);
 
             }

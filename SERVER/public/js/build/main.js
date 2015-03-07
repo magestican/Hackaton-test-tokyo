@@ -57,8 +57,8 @@ angular.module('Controllers')
     }]);
 },{}],5:[function(require,module,exports){
 angular.module('Controllers')
-    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory',
-    function ($scope, $filter, QuestionFactory) {
+    .controller('QuestionController', ['$scope', '$filter', 'QuestionFactory','DatabaseFactory',
+    function ($scope, $filter, QuestionFactory, DatabaseFactory) {
 
 
         $scope.addQuestion = function () {
@@ -82,7 +82,7 @@ angular.module('Controllers')
 
         $scope.addDummyQuestion = function () {
             try {
-                var result = new QuestionFactory.newQuestion("How do I code?", "Hello everyone I wanted to know how to code..thanks", "magestico", 5, new Date().toDateString(), ["category1", "category2"]);
+                var result = new QuestionFactory.newQuestion("How do I code?", "Hello everyone I wanted to know how to code..thanks", "magestico", 5, new Date().toDateString(), ["coding", "supercoding"]);
                 $scope.global.questions.push(result);
 
             }
@@ -210,8 +210,7 @@ angular.module('Directives')
 
                         console.log("login success");
 
-                        var login = LoginFactory.login
-                        login().login({ token: result.access_token }, function (data) {
+                        LoginFactory.login().login({ token: result.access_token }, function (data) {
                             console.log("login server result");
 
                             //if success get user data
@@ -393,7 +392,7 @@ angular.module('Directives')
                         })
                     }
 
-                  
+
                 }
 
 
@@ -416,8 +415,8 @@ angular.module('Directives')
 
                     try {
 
-                        var question = QuestionFactory.newQuestion(model.title, model.body, UserService.currentUser.username, 0, new Date().toDateString(), model.categories, UserService.currentUser.picture);
-                        scope.global.questions.push(question);
+                        QuestionFactory.newQuestion(model.title, model.body, UserService.currentUser.username, 0, new Date().toDateString(), model.categories, UserService.currentUser.picture);
+
 
 
                         scope.resetQuestionModal();
@@ -493,26 +492,44 @@ require('./factories/databaseFactory.js');
 angular.module('Factories')
 
     .factory('DatabaseFactory', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
-
+        
 
         return {
 
-            update: function (Title, Body, Rating, Datetime, Categories) {
+            updateQuestions: function (Title, Body, Rating, Datetime, Categories) {
 
-                var update = $resource('/main/update_database/:token', {}, {
-                    'getDatabase': { method: 'POST' },
+                var updateQuestions = $resource('/main/update_questions/:questions:token', {}, {
+                    'updateQuestions': { method: 'POST' },
                 });
 
-                return update;
+                return updateQuestions;
             },
 
-            get: function () {
+            updateCategories: function () {
 
-                var get = $resource('/main/get_database', {}, {
-                    'getDatabase': { method: 'GET' },
+                var updateCategories = $resource('/main/update_categories/:categories:token', {}, {
+                    'updateCategories': { method: 'POST' },
                 });
 
-                return get;
+                return updateCategories;
+
+            },
+            getCategories: function () {
+
+                var getCategories = $resource('/main/get_categories', {}, {
+                    'getCategories': { method: 'GET' },
+                });
+
+                return getCategories;
+
+            },
+            getQuestions: function () {
+
+                var getQuestion = $resource('/main/get_questions', {}, {
+                    'getQuestions': { method: 'GET' },
+                });
+
+                return getQuestion;
 
             }
 
@@ -543,7 +560,7 @@ angular.module('Factories')
 },{}],20:[function(require,module,exports){
 angular.module('Factories')
 
-    .factory('QuestionFactory', ['$rootScope', '$q', function ($rootScope, $q) {
+    .factory('QuestionFactory', ['$rootScope', '$q', 'DatabaseFactory', 'UserService', function ($rootScope, $q, DatabaseFactory, UserService) {
         return {
 
             newQuestion: function (Title, Body, Username, Rating, Datetime, Categories, UserPicture) {
@@ -565,7 +582,35 @@ angular.module('Factories')
                     this.userpicture = UserPicture || "images/profile-placeholder.jpg";
                 }
 
-                return new question(Title, Body, Username, Rating, Datetime, Categories, UserPicture);
+
+                //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+
+                var qq = new question(Title, Body, Username, Rating, Datetime, Categories, UserPicture);
+
+                DatabaseFactory.getQuestions().getQuestions({},
+                    function (data) {
+                        debugger
+                        $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
+
+                        $rootScope.global.questions.push(qq);
+
+                        DatabaseFactory.updateQuestions().updateQuestions({
+                            questions: JSON.stringify($rootScope.global.questions),
+                            token: UserService.currentUser.token
+                        },
+                        function (data2) {
+
+                            $rootScope.global.questions = JSON.parse(data2.result);
+                            console.log("database updated");
+                        })
+
+                    })
+
+
+
+
+
+
             }
 
 
@@ -605,8 +650,37 @@ angular.module('Services')
         this.newCategory = function (name) {
 
             if (UserService.currentUser.isAdmin) {
-                if (name != null && name != undefined)
+                if (name != null && name != undefined) {
+
+
+                    //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+
+                    DatabaseFactory.getCategories().getCategories({},
+                    function (data) {
+
+                        debugger
+                        that.categories = JSON.parse((data.result != "" ? data.result : []));
+                        that.categories.push(qq);
+
+                        DatabaseFactory.updateCategories().updateCategories({
+                            categories: JSON.stringify(that.categories),
+                            token: UserService.currentUser.token
+                        },
+                        function (data2) {
+
+                            that.categories = JSON.parse(data2.result);
+                            console.log("database updated");
+                        },
+                        function (error2) {
+                            console.log(error2);
+                        })
+                    },
+                    function (error) {
+                        console.log(error);
+                    })
+
                     that.categories.push(name);
+                }
                 else {
                     $rootScope.global.errorInModalOcurred("The name of the category cannot be empty");
                     throw new RegExp("The name of the category cannot be empty");
@@ -1039,7 +1113,15 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
     "    <div class=\"ui hidden divider\"></div>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "    <div class=\"mini ui blue button\">\r" +
     "\n" +
@@ -1050,6 +1132,18 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "    </div>\r" +
     "\n" +
     "    <div class=\"ui hidden divider\"></div>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <div ng-repeat=\"category in model.question.categories\" class=\"ui  mini button\">\r" +
+    "\n" +
+    "        {{category}}\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "\r" +
     "\n" +
     "\r" +
     "\n" +
