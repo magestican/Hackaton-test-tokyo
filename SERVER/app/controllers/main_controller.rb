@@ -17,25 +17,31 @@ class MainController < ActionController::Base
   #i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..sorry :(
   
   def get_questions
-	JSON.parse (File.open('db/questions.json').read )
+    output = {'result' => open('db/questions.json').read }
+	render :json => output
   end
   
   def get_categories
-	JSON.parse ( File.open('db/categories.json').read )
+	output = {'result' => open('db/categories.json').read }
+	render :json => output
   end
   
   def update_categories
 	if @@logged_users.include?(params[:token]) then
-		File.open("db/categories.json", 'w') do |f|
+		open("db/categories.json", 'w') do |f|
 			f.write(params[:categories])
+			output = {'result' => open('db/categories.json').read }
+			render :json => output
 		end
 	end
   end
   
   def update_questions
 	if @@logged_users.include?(params[:token]) then
-		File.open("db/questions.json", 'w') do |f|
+		open("db/questions.json", 'w') do |f|
 			f.write(params[:questions])
+			output = {'result' => open('db/questions.json').read }
+			render :json => output
 		end
 	end
   end

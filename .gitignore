@@ -1,12 +1,9 @@
 *.DS_Store
 
-.grunt/
-.sass-cache/
-node_modules/
-ssl/
+SERVER/.grunt/
+SERVER/.sass-cache/
+SERVER/node_modules/
 
-WEBSITE/js/build/
-WEBSITE/styles/build/
-WEBSITE/templates/compiledhtml.js
 
-package.json
+
+SERVER/package.json
