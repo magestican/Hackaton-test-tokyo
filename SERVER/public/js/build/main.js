@@ -468,14 +468,15 @@ angular.module('Directives')
 
                 var tpl = 'templates/directives/question.html';
 
-                debugger
+                
                 scope.model = {};
                 scope.model.UserService = UserService;
                 scope.model.question = scope.question;
-                debugger
+
+
 
                 $http.get(tpl).then(function (response) {
-                    element.html($compile(response.data)(scope));
+                    return element.html($compile(response.data)(scope));
                 });
 
             }
@@ -644,20 +645,23 @@ angular.module('Factories')
                             }
                         }
 
-                        if (found) {
+                        //if we are in debug mode lets not delete questions on the server :)
+                        if (!$rootScope.global.debugMode) {
+                            if (found) {
 
-                            DatabaseFactory.updateQuestions().updateQuestions({
-                                questions: JSON.stringify($rootScope.global.questions),
-                                token: UserService.currentUser.token
-                            },
-                            function (data2) {
-                                debugger
-                                $rootScope.global.questions = JSON.parse(data2.result);
-                                console.log("database updated");
-                            },
-                            function (error2) {
-                                console.log(error2);
-                            })
+                                DatabaseFactory.updateQuestions().updateQuestions({
+                                    questions: JSON.stringify($rootScope.global.questions),
+                                    token: UserService.currentUser.token
+                                },
+                                function (data2) {
+                                    debugger
+                                    $rootScope.global.questions = JSON.parse(data2.result);
+                                    console.log("database updated");
+                                },
+                                function (error2) {
+                                    console.log(error2);
+                                })
+                            }
                         }
                     },
                     function (error) {
@@ -748,7 +752,7 @@ angular.module('Services')
 
 },{}],25:[function(require,module,exports){
 angular.module('Services')
-    .service('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+    .service('UserService', ['$rootScope', '$resource', function ($rootScope,  $resource) {
 
         function user(Username, Picture, Token, Email) {
             this.username = Username;
@@ -1149,7 +1153,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +
-    "        <a ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
+    "        <a  ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
     "\n" +
     "            <i class=\" black  \">DELETE </i>\r" +
     "\n" +

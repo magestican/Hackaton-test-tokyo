@@ -371,7 +371,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +
-    "        <a ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
+    "        <a  ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
     "\n" +
     "            <i class=\" black  \">DELETE </i>\r" +
     "\n" +

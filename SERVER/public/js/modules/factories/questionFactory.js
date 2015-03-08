@@ -84,20 +84,23 @@
                             }
                         }
 
-                        if (found) {
+                        //if we are in debug mode lets not delete questions on the server :)
+                        if (!$rootScope.global.debugMode) {
+                            if (found) {
 
-                            DatabaseFactory.updateQuestions().updateQuestions({
-                                questions: JSON.stringify($rootScope.global.questions),
-                                token: UserService.currentUser.token
-                            },
-                            function (data2) {
-                                debugger
-                                $rootScope.global.questions = JSON.parse(data2.result);
-                                console.log("database updated");
-                            },
-                            function (error2) {
-                                console.log(error2);
-                            })
+                                DatabaseFactory.updateQuestions().updateQuestions({
+                                    questions: JSON.stringify($rootScope.global.questions),
+                                    token: UserService.currentUser.token
+                                },
+                                function (data2) {
+                                    debugger
+                                    $rootScope.global.questions = JSON.parse(data2.result);
+                                    console.log("database updated");
+                                },
+                                function (error2) {
+                                    console.log(error2);
+                                })
+                            }
                         }
                     },
                     function (error) {

@@ -9,14 +9,15 @@ angular.module('Directives')
 
                 var tpl = 'templates/directives/question.html';
 
-                debugger
+                
                 scope.model = {};
                 scope.model.UserService = UserService;
                 scope.model.question = scope.question;
-                debugger
+
+
 
                 $http.get(tpl).then(function (response) {
-                    element.html($compile(response.data)(scope));
+                    return element.html($compile(response.data)(scope));
                 });
 
             }

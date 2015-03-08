@@ -1,5 +1,5 @@
 ﻿angular.module('Services')
-    .service('UserService', ['$rootScope', '$q', '$resource', function ($rootScope, $q, $resource) {
+    .service('UserService', ['$rootScope', '$resource', function ($rootScope,  $resource) {
 
         function user(Username, Picture, Token, Email) {
             this.username = Username;

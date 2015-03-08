@@ -113,6 +113,7 @@ module.exports = function (grunt) {
                 options: {
                     specs: 'public/js/test/*js',
                     vendor: [
+                        'http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js',
                         'public/js/build/lib.js'
                     ],
                     helpers: [
