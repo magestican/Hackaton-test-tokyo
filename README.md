@@ -65,6 +65,14 @@ if deploying to production run grunt production, it will minify (uglify) your fi
 
 
 
+/******************TO TEST******************************//
+
+run the command : 
+
+►grunt test
+
+
+
 /******************IMPORTANT******************************//
 
 TO SET WHO IS THE ADMIN MODIFY THE VARIABLE $adminemail in the maincontroller in the ruby server code
