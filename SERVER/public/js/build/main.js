@@ -81,6 +81,12 @@ angular.module('Controllers')
 
 
 
+
+        $scope.global.deleteQuestion = function (id) {
+            QuestionFactory.deleteQuestion(id);
+        }
+
+
     }]);
 },{}],6:[function(require,module,exports){
 angular.module('Directives', []);
@@ -452,17 +458,26 @@ angular.module('Directives')
     }]);
 },{}],16:[function(require,module,exports){
 angular.module('Directives')
-    .directive('question', ['$filter', function ($filter) {
+    .directive('question', ['$filter', 'QuestionFactory', '$compile', '$http', 'UserService', function ($filter, QuestionFactory, $compile, $http, UserService) {
         return {
             restrict: 'E',
-            templateUrl: 'templates/directives/question.html',
             transclude: true,
-            replace: true,
-            scope: false,
+            replace: false,
+            scope: true,
             link: function (scope, element, attrs, controllers) {
 
+                var tpl = 'templates/directives/question.html';
+
+                debugger
                 scope.model = {};
+                scope.model.UserService = UserService;
                 scope.model.question = scope.question;
+                debugger
+
+                $http.get(tpl).then(function (response) {
+                    element.html($compile(response.data)(scope));
+                });
+
             }
         };
     }]);
@@ -583,7 +598,7 @@ angular.module('Factories')
 
                 DatabaseFactory.getQuestions().getQuestions({},
                     function (data) {
-                        
+
                         $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
 
                         $rootScope.global.questions.push(qq);
@@ -609,7 +624,6 @@ angular.module('Factories')
             },
 
             deleteQuestion: function (id) {
-
                 //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
 
                 DatabaseFactory.getQuestions().getQuestions({},
@@ -624,27 +638,30 @@ angular.module('Factories')
                             var qq = $rootScope.global.questions[i];
 
                             if (qq.id == id) {
-                                delete $rootScope.global.questions[i]
+
+                                $rootScope.global.questions.splice(i, 1);
                                 found = true;
                             }
                         }
 
                         if (found) {
 
-
                             DatabaseFactory.updateQuestions().updateQuestions({
                                 questions: JSON.stringify($rootScope.global.questions),
                                 token: UserService.currentUser.token
                             },
                             function (data2) {
-
+                                debugger
                                 $rootScope.global.questions = JSON.parse(data2.result);
                                 console.log("database updated");
+                            },
+                            function (error2) {
+                                console.log(error2);
                             })
-
                         }
-
-
+                    },
+                    function (error) {
+                        console.log(error);
                     })
             }
 
@@ -1131,6 +1148,12 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "        <img ng-src=\"{{model.question.userpicture}}\" class=\"ui avatar image\">\r" +
     "\n" +
     "        {{model.question.title}}\r" +
+    "\n" +
+    "        <a ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
+    "\n" +
+    "            <i class=\" black  \">DELETE </i>\r" +
+    "\n" +
+    "        </a>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +

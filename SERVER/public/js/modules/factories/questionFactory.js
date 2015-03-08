@@ -38,7 +38,7 @@
 
                 DatabaseFactory.getQuestions().getQuestions({},
                     function (data) {
-                        
+
                         $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
 
                         $rootScope.global.questions.push(qq);
@@ -64,7 +64,6 @@
             },
 
             deleteQuestion: function (id) {
-
                 //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
 
                 DatabaseFactory.getQuestions().getQuestions({},
@@ -79,27 +78,30 @@
                             var qq = $rootScope.global.questions[i];
 
                             if (qq.id == id) {
-                                delete $rootScope.global.questions[i]
+
+                                $rootScope.global.questions.splice(i, 1);
                                 found = true;
                             }
                         }
 
                         if (found) {
 
-
                             DatabaseFactory.updateQuestions().updateQuestions({
                                 questions: JSON.stringify($rootScope.global.questions),
                                 token: UserService.currentUser.token
                             },
                             function (data2) {
-
+                                debugger
                                 $rootScope.global.questions = JSON.parse(data2.result);
                                 console.log("database updated");
+                            },
+                            function (error2) {
+                                console.log(error2);
                             })
-
                         }
-
-
+                    },
+                    function (error) {
+                        console.log(error);
                     })
             }
 

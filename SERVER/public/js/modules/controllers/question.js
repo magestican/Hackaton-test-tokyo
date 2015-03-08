@@ -15,4 +15,10 @@ angular.module('Controllers')
 
 
 
+
+        $scope.global.deleteQuestion = function (id) {
+            QuestionFactory.deleteQuestion(id);
+        }
+
+
     }]);

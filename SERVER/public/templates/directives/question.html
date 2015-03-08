@@ -12,6 +12,9 @@
         </a>
         <img ng-src="{{model.question.userpicture}}" class="ui avatar image">
         {{model.question.title}}
+        <a ng-if="model.UserService.currentUser != null && model.UserService.currentUser.isAdmin" ng-click="global.deleteQuestion(model.question.id)" class="ui top right attached red button ">
+            <i class=" black  ">DELETE </i>
+        </a>
     </div>
 
 
