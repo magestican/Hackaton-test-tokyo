@@ -47,6 +47,14 @@ this will read the packages.js file and download all the prerequired libraries t
 
 ►grunt
 
+
+
+/******************TO TEST******************************//
+
+run the command : 
+
+►grunt test
+
 because we use ass we need to install compass
 
 ►gem install compass
