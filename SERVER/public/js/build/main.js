@@ -86,6 +86,10 @@ angular.module('Controllers')
             QuestionFactory.deleteQuestion(id);
         }
 
+        $scope.global.likeQuestion = function (id) {
+            QuestionFactory.likeQuestion(id);
+        }
+
 
     }]);
 },{}],6:[function(require,module,exports){
@@ -667,6 +671,51 @@ angular.module('Factories')
                     function (error) {
                         console.log(error);
                     })
+            },
+
+            likeQuestion: function (id) {
+                //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+
+                DatabaseFactory.getQuestions().getQuestions({},
+                    function (data) {
+
+                        $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
+
+                        var found = false;
+
+                        for (var i = 0; i < $rootScope.global.questions.length ; i++) {
+
+                            var qq = $rootScope.global.questions[i];
+
+                            if (qq.id == id) {
+
+                                qq.rating += 1;
+                                found = true;
+                            }
+                        }
+
+                        //if we are in debug mode lets not delete questions on the server :)
+                        if (!$rootScope.global.debugMode) {
+                            if (found) {
+
+                                DatabaseFactory.updateQuestions().updateQuestions({
+                                    questions: JSON.stringify($rootScope.global.questions),
+                                    token: UserService.currentUser.token
+                                },
+                                function (data2) {
+
+                                    $rootScope.global.questions = JSON.parse(data2.result);
+                                    console.log("database updated");
+                                },
+                                function (error2) {
+                                    console.log(error2);
+                                })
+                            }
+                        }
+                    },
+                    function (error) {
+                        console.log(error);
+                    })
             }
 
 
@@ -875,7 +924,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in global.questions | orderBy:rating | limitTo: 1\"></question>\r" +
+    "        <question ng-repeat=\"question in global.questions | orderBy:'-rating' | limitTo: 1\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -1153,7 +1202,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +
-    "        <a  ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
+    "        <a ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
     "\n" +
     "            <i class=\" black  \">DELETE </i>\r" +
     "\n" +
@@ -1185,7 +1234,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "    <div class=\"mini ui blue button\">\r" +
+    "    <div ng-if=\"model.UserService.currentUser != null\" ng-click=\"global.likeQuestion(model.question.id)\" class=\"mini ui blue button\">\r" +
     "\n" +
     "        <i class=\"like icon\"></i>\r" +
     "\n" +

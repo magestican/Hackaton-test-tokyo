@@ -12,7 +12,7 @@
         </a>
         <img ng-src="{{model.question.userpicture}}" class="ui avatar image">
         {{model.question.title}}
-        <a  ng-if="model.UserService.currentUser != null && model.UserService.currentUser.isAdmin" ng-click="global.deleteQuestion(model.question.id)" class="ui top right attached red button ">
+        <a ng-if="model.UserService.currentUser != null && model.UserService.currentUser.isAdmin" ng-click="global.deleteQuestion(model.question.id)" class="ui top right attached red button ">
             <i class=" black  ">DELETE </i>
         </a>
     </div>
@@ -28,7 +28,7 @@
 
     <div class="ui hidden divider"></div>
 
-    <div class="mini ui blue button">
+    <div ng-if="model.UserService.currentUser != null" ng-click="global.likeQuestion(model.question.id)" class="mini ui blue button">
         <i class="like icon"></i>
         Like
     </div>

@@ -20,5 +20,9 @@ angular.module('Controllers')
             QuestionFactory.deleteQuestion(id);
         }
 
+        $scope.global.likeQuestion = function (id) {
+            QuestionFactory.likeQuestion(id);
+        }
+
 
     }]);

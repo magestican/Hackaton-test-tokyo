@@ -93,7 +93,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "        <question ng-repeat=\"question in global.questions | orderBy:rating | limitTo: 1\"></question>\r" +
+    "        <question ng-repeat=\"question in global.questions | orderBy:'-rating' | limitTo: 1\"></question>\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -371,7 +371,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "        {{model.question.title}}\r" +
     "\n" +
-    "        <a  ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
+    "        <a ng-if=\"model.UserService.currentUser != null && model.UserService.currentUser.isAdmin\" ng-click=\"global.deleteQuestion(model.question.id)\" class=\"ui top right attached red button \">\r" +
     "\n" +
     "            <i class=\" black  \">DELETE </i>\r" +
     "\n" +
@@ -403,7 +403,7 @@ angular.module('odigoapp').run(['$templateCache', function($templateCache) {
     "\n" +
     "\r" +
     "\n" +
-    "    <div class=\"mini ui blue button\">\r" +
+    "    <div ng-if=\"model.UserService.currentUser != null\" ng-click=\"global.likeQuestion(model.question.id)\" class=\"mini ui blue button\">\r" +
     "\n" +
     "        <i class=\"like icon\"></i>\r" +
     "\n" +

@@ -106,6 +106,51 @@
                     function (error) {
                         console.log(error);
                     })
+            },
+
+            likeQuestion: function (id) {
+                //i used this system just to save time and not use a database in the server since i dont know much about ruby or rails..in production case I would use only one method of course to save on server calls
+
+                DatabaseFactory.getQuestions().getQuestions({},
+                    function (data) {
+
+                        $rootScope.global.questions = JSON.parse((data.result != "" ? data.result : []));
+
+                        var found = false;
+
+                        for (var i = 0; i < $rootScope.global.questions.length ; i++) {
+
+                            var qq = $rootScope.global.questions[i];
+
+                            if (qq.id == id) {
+
+                                qq.rating += 1;
+                                found = true;
+                            }
+                        }
+
+                        //if we are in debug mode lets not delete questions on the server :)
+                        if (!$rootScope.global.debugMode) {
+                            if (found) {
+
+                                DatabaseFactory.updateQuestions().updateQuestions({
+                                    questions: JSON.stringify($rootScope.global.questions),
+                                    token: UserService.currentUser.token
+                                },
+                                function (data2) {
+
+                                    $rootScope.global.questions = JSON.parse(data2.result);
+                                    console.log("database updated");
+                                },
+                                function (error2) {
+                                    console.log(error2);
+                                })
+                            }
+                        }
+                    },
+                    function (error) {
+                        console.log(error);
+                    })
             }
 
 
