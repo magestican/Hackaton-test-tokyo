@@ -403,9 +403,9 @@ angular.module('Directives')
 
                     scope.global.removeModalError();
 
-
+                    model.categories = [];
                     $('ul.select2-selection__rendered').find('li.select2-selection__choice').each(function (index, object) {
-                        model.categories = $(object).text;
+                        model.categories.push($(object).text);
                     })
 
                     try {
