@@ -1,5 +1,8 @@
 # hackaton test
 
+*done in 48 hours*
+
+live at : https://secret-beyond-6234.herokuapp.com/ (no https so please click on the shield top right of the browser bar)
 
 /******************TO TEST THE SITE******************************//
 
