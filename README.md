@@ -1,5 +1,4 @@
-# odigotest
-test for odigo
+# hackaton test
 
 
 /******************TO TEST THE SITE******************************//
@@ -48,7 +47,7 @@ this will read the packages.js file and download all the prerequired libraries t
 ►grunt
 
 because we use ass we need to install compass
-
+odi
 ►gem install compass
 
 now to finish, execute 
